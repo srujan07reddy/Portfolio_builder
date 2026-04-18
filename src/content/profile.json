@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "name": "Your Name",
+    "roles": "Strategic Consultant, Cybersecurity Expert, Tech Innovator",
+    "subtitle": "Transforming complex challenges into strategic solutions.",
+    "avatar": "/images/avatar-placeholder.png",
+    "tags": "Consulting, Security, Innovation, Technology"
+  },
+  "page_blocks": [
+    {
+      "type": "identity_block",
+      "title": "01 // PROFESSIONAL IDENTITY",
+      "bio": "A results-driven professional with expertise in strategic consulting, cybersecurity, and technological innovation. Specializing in enterprise solutions that drive digital transformation and secure system architectures. Committed to delivering high-impact solutions that align with business objectives and industry best practices.",
+      "stat_projects": "10+",
+      "stat_leadership": "Enterprise Solutions"
+    },
+    {
+      "type": "domains_block",
+      "title": "02 // CORE COMPETENCIES",
+      "list": [
+        {
+          "name": "Strategic Consulting",
+          "description": "Providing comprehensive consulting services for enterprise digital transformation, risk management, and strategic planning initiatives."
+        },
+        {
+          "name": "Cybersecurity Architecture",
+          "description": "Designing and implementing robust security frameworks, compliance solutions, and threat mitigation strategies for enterprise environments."
+        },
+        {
+          "name": "Technology Innovation",
+          "description": "Leveraging cutting-edge technologies including AI, automation, and cloud solutions to drive innovation and operational efficiency."
+        }
+      ]
+    },
+    {
+      "type": "projects_block",
+      "title": "03 // FEATURED SOLUTIONS",
+      "projects_list": [
+        {
+          "name": "Enterprise Security Framework",
+          "description": "Comprehensive security architecture design and implementation for large-scale enterprise environments with multi-layered protection strategies.",
+          "tools": "Security Assessment, Risk Analysis, Compliance Frameworks"
+        },
+        {
+          "name": "Digital Transformation Strategy",
+          "description": "End-to-end digital transformation consulting including cloud migration, process automation, and technology modernization.",
+          "tools": "Cloud Architecture, Process Optimization, Change Management"
+        },
+        {
+          "name": "AI-Powered Analytics Platform",
+          "description": "Advanced analytics platform leveraging artificial intelligence to provide actionable insights and predictive modeling for enterprise decision-making.",
+          "tools": "AI/ML, Data Analytics, Cloud Computing"
+        }
+      ]
+    },
+    {
+      "type": "consulting_block",
+      "title": "04 // PROFESSIONAL SERVICES",
+      "headline": "Delivering strategic solutions that drive business transformation.",
+      "body": "Specializing in enterprise consulting, cybersecurity architecture, and technology innovation. Focused on creating scalable, secure, and efficient solutions that align with business objectives and industry standards.",
+      "sub_body": "Available for strategic consulting engagements, security assessments, and technology transformation projects. Let's discuss how we can achieve your business goals together.",
+      "action_button": {
+        "cta_text": "Start Discussion",
+        "cta_url": "/contact"
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+local_backend: true
+backend:
+  name: test-repo
+
+media_folder: "public/images"
+public_folder: "/images"
+
+collections:
+  - name: "settings"
+    label: "Site Settings"
+    file: "src/content/profile.json"
+    fields:
+      - { label: "Site Engine", name: "engine", widget: "object", fields: [
+          { label: "Main Template", name: "main_template", widget: "select", options: ["Researcher", "Minimalist", "Corporate"] },
+          { label: "Color Theme", name: "theme_color", widget: "select", options: ["Cyan", "Ruby", "Emerald", "Violet"] }
+        ]}
+      - { label: "Hero Section", name: "hero", widget: "object", fields: [
+          { label: "Operator Name", name: "name", widget: "string" },
+          { label: "Roles", name: "roles", widget: "list" }
+        ]}
