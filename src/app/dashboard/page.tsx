@@ -3,15 +3,20 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Save, Layout, User, Globe, Share2, Settings, LogOut, AlertCircle, CheckCircle, Loader2, Eye } from "lucide-react";
+import { Save, Layout, User, Globe, Share2, Settings, LogOut, AlertCircle, CheckCircle, Loader2, Eye, Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getPortfolio, createInitialPortfolio, type Portfolio } from "@/lib/portfolio-service";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [activeTab, setActiveTab] = useState<"profile" | "sections" | "domain" | "social" | "settings">("profile");
+  const [portfolioExists, setPortfolioExists] = useState(false);
+  const [portfolioData, setPortfolioData] = useState<Portfolio | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
 
   const [profile, setProfile] = useState({ full_name: "", username: "", bio: "", template_choice: "Corporate_Glacier", is_public: false });
@@ -24,10 +29,23 @@ export default function Dashboard() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) { router.push("/login"); return; }
-        const response = await fetch("/api/portfolio", { method: "GET", headers: { "Content-Type": "application/json" } });
-        if (!response.ok) throw new Error("Failed to load profile");
-        const data = await response.json();
-        if (data.portfolio) setProfile(data.portfolio);
+        
+        setUserId(session.user.id);
+        const portfolio = await getPortfolio(session.user.id);
+        
+        if (portfolio) {
+          setPortfolioExists(true);
+          setPortfolioData(portfolio);
+          setProfile({
+            full_name: portfolio.full_name || "",
+            username: portfolio.username || "",
+            bio: portfolio.bio || "",
+            template_choice: portfolio.template_choice || "Corporate_Glacier",
+            is_public: portfolio.is_public || false
+          });
+        } else {
+          setPortfolioExists(false);
+        }
       } catch (err: any) {
         setError(err.message || "Failed to load profile");
       } finally {
@@ -55,6 +73,31 @@ export default function Dashboard() {
   };
 
   const handleLogout = async () => { await supabase.auth.signOut(); localStorage.removeItem("user_session"); router.push("/"); };
+
+  const handleCreatePortfolio = async () => {
+    if (!userId || !profile.username.trim()) {
+      setError("Username is required to create a portfolio");
+      return;
+    }
+    
+    setCreating(true);
+    setError("");
+    try {
+      const result = await createInitialPortfolio(userId, profile.username);
+      if (result) {
+        setPortfolioExists(true);
+        setPortfolioData(result);
+        setSuccess("Portfolio created successfully!");
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        throw new Error("Failed to create portfolio");
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to create portfolio");
+    } finally {
+      setCreating(false);
+    }
+  };
 
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
@@ -153,7 +196,50 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {activeTab === "profile" && (
+              {activeTab === "profile" && !portfolioExists && (
+                <div className="text-center py-12 space-y-6">
+                  <div className="mb-6">
+                    <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <Plus className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight mb-2">Create Your Profile</h2>
+                    <p className="text-slate-600">Set up your portfolio to get started with our platform</p>
+                  </div>
+                  
+                  <div className="max-w-md mx-auto space-y-4">
+                    <div>
+                      <label className="block text-sm font-bold text-slate-900 mb-2 text-left">Username</label>
+                      <input
+                        type="text"
+                        value={profile.username}
+                        onChange={(e) => setProfile({ ...profile, username: e.target.value })}
+                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                        placeholder="your-username"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleCreatePortfolio}
+                    disabled={creating}
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl disabled:cursor-not-allowed inline-flex items-center gap-2"
+                  >
+                    {creating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4" />
+                        Create Portfolio
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {activeTab === "profile" && portfolioExists && (
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">Profile Configuration</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -222,6 +308,7 @@ export default function Dashboard() {
                 </div>
               )}
 
+              {portfolioExists && (
               <div className="mt-8 pt-6 border-t border-slate-200 flex justify-end gap-4">
                 <Link
                   href={`/${profile.username}`}
@@ -249,6 +336,7 @@ export default function Dashboard() {
                   )}
                 </button>
               </div>
+              )}
             </div>
           </div>
         </div>
