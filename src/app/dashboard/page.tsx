@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Save, Layout, User, Globe, Share2, Settings, LogOut, AlertCircle, CheckCircle, Loader2, Eye, Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { getPortfolioByUserId, savePortfolio, type Portfolio } from "@/lib/portfolio-service";
+import { getPortfolioByUserId, savePortfolio, getProjectsByPortfolioId, type Portfolio, type Project } from "@/lib/portfolio-service";
+import ProjectCard from "@/components/ProjectCard";
+import AddProjectModal from "@/components/AddProjectModal";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -17,6 +19,8 @@ export default function Dashboard() {
   const [portfolioExists, setPortfolioExists] = useState(false);
   const [portfolioData, setPortfolioData] = useState<Portfolio | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const router = useRouter();
 
   const [profile, setProfile] = useState({ full_name: "", username: "", bio: "", template_choice: "Corporate_Glacier", is_public: false });
@@ -43,8 +47,13 @@ export default function Dashboard() {
             template_choice: portfolio.template_choice || "Corporate_Glacier",
             is_public: false
           });
+
+          // Fetch projects for this portfolio
+          const userProjects = await getProjectsByPortfolioId(portfolio.id);
+          setProjects(userProjects);
         } else {
           setPortfolioExists(false);
+          setProjects([]);
         }
       } catch (err: any) {
         setError(err.message || "Failed to load profile");
@@ -120,6 +129,12 @@ export default function Dashboard() {
     } finally {
       setCreating(false);
     }
+  };
+
+  const handleProjectAdded = (newProject: Project) => {
+    setProjects(prev => [newProject, ...prev]);
+    setSuccess("Project added successfully!");
+    setTimeout(() => setSuccess(""), 3000);
   };
 
   if (loading) return (
@@ -309,6 +324,39 @@ export default function Dashboard() {
                       <option value="Minimalist">Minimalist (Clean)</option>
                     </select>
                   </div>
+
+                  {/* Projects Section */}
+                  <div className="border-t border-slate-200 pt-6 mt-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">Projects</h3>
+                      <button
+                        onClick={() => setShowAddProjectModal(true)}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add New Project
+                      </button>
+                    </div>
+
+                    {projects.length === 0 ? (
+                      <div className="text-center py-8 text-slate-500">
+                        <p className="mb-4">No projects added yet.</p>
+                        <button
+                          onClick={() => setShowAddProjectModal(true)}
+                          className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold rounded-lg transition-all"
+                        >
+                          Add your first project
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {projects.map((project) => (
+                          <ProjectCard key={project.id} project={project} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   <div className="flex items-center gap-3">
                     <input
                       type="checkbox"
@@ -364,6 +412,16 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Add Project Modal */}
+      {portfolioData && (
+        <AddProjectModal
+          isOpen={showAddProjectModal}
+          onClose={() => setShowAddProjectModal(false)}
+          portfolioId={portfolioData.id}
+          onProjectAdded={handleProjectAdded}
+        />
+      )}
     </main>
   );
 }

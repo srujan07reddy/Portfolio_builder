@@ -11,6 +11,15 @@ export interface Portfolio {
   social_links?: Record<string, string>;
 }
 
+export interface Project {
+  id: string;
+  portfolio_id: string;
+  title: string;
+  description?: string;
+  tech_stack: string[];
+  created_at: string;
+}
+
 /**
  * Fetch portfolio by user ID
  */
@@ -61,6 +70,59 @@ export async function savePortfolio(data: Partial<Portfolio>): Promise<Portfolio
     return result as Portfolio;
   } catch (err) {
     console.error("Unexpected error saving portfolio:", err);
+    return null;
+  }
+}
+
+/**
+ * Fetch projects by portfolio ID
+ */
+export async function getProjectsByPortfolioId(portfolioId: string): Promise<Project[]> {
+  try {
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("portfolio_id", portfolioId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching projects:", error);
+      return [];
+    }
+
+    return data as Project[];
+  } catch (err) {
+    console.error("Unexpected error fetching projects:", err);
+    return [];
+  }
+}
+
+/**
+ * Create a new project
+ */
+export async function createProject(project: Omit<Project, "id" | "created_at">): Promise<Project | null> {
+  try {
+    if (!project.portfolio_id) {
+      throw new Error("portfolio_id is required to create project");
+    }
+    if (!project.title.trim()) {
+      throw new Error("title is required to create project");
+    }
+
+    const { data, error } = await supabase
+      .from("projects")
+      .insert(project)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error creating project:", error);
+      return null;
+    }
+
+    return data as Project;
+  } catch (err) {
+    console.error("Unexpected error creating project:", err);
     return null;
   }
 }
