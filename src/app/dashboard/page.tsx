@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Save, Layout, User, Globe, Share2, Settings, LogOut, AlertCircle, CheckCircle, Loader2, Eye, Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { getPortfolio, createInitialPortfolio, type Portfolio } from "@/lib/portfolio-service";
+import { getPortfolioByUserId, savePortfolio, type Portfolio } from "@/lib/portfolio-service";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function Dashboard() {
         if (!session) { router.push("/login"); return; }
         
         setUserId(session.user.id);
-        const portfolio = await getPortfolio(session.user.id);
+        const portfolio = await getPortfolioByUserId(session.user.id);
         
         if (portfolio) {
           setPortfolioExists(true);
@@ -41,7 +41,7 @@ export default function Dashboard() {
             username: portfolio.username || "",
             bio: portfolio.bio || "",
             template_choice: portfolio.template_choice || "Corporate_Glacier",
-            is_public: portfolio.is_public || false
+            is_public: false
           });
         } else {
           setPortfolioExists(false);
@@ -58,13 +58,28 @@ export default function Dashboard() {
   const handleSave = async () => {
     setError(""); setSuccess(""); setSaving(true);
     try {
+      if (!userId) throw new Error("User ID not found");
       if (!profile.full_name.trim()) throw new Error("Display name is required");
       if (!profile.username.trim()) throw new Error("Username is required");
       if (profile.username.length < 3) throw new Error("Username must be at least 3 characters");
       if (!/^[a-zA-Z0-9_-]+$/.test(profile.username)) throw new Error("Username can only contain letters, numbers, hyphens, and underscores");
-      const response = await fetch("/api/portfolio", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile, sections, domain, social }) });
-      if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.error || "Failed to save profile"); }
-      setSuccess("Profile saved successfully!"); setTimeout(() => setSuccess(""), 3000);
+      
+      const result = await savePortfolio({
+        owner_id: userId,
+        username: profile.username,
+        full_name: profile.full_name,
+        bio: profile.bio,
+        template_choice: profile.template_choice,
+        skills: [],
+        social_links: social
+      });
+      
+      if (result) {
+        setSuccess("Profile saved successfully!"); 
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        throw new Error("Failed to save profile");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to save profile");
     } finally {
@@ -83,7 +98,15 @@ export default function Dashboard() {
     setCreating(true);
     setError("");
     try {
-      const result = await createInitialPortfolio(userId, profile.username);
+      const result = await savePortfolio({
+        owner_id: userId,
+        username: profile.username,
+        full_name: profile.full_name || "",
+        bio: profile.bio || "",
+        template_choice: profile.template_choice || "Corporate_Glacier",
+        skills: [],
+        social_links: {}
+      });
       if (result) {
         setPortfolioExists(true);
         setPortfolioData(result);
