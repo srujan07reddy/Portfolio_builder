@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import StandardTemplate from "@/templates/StandardTemplate";
+import DevPreciseTemplate from "@/templates/specialized/DevPreciseTemplate";
+import AcademicCleanTemplate from "@/templates/specialized/AcademicCleanTemplate";
+import CinemaDramaticTemplate from "@/templates/specialized/CinemaDramaticTemplate";
+import VibrantSocialTemplate from "@/templates/specialized/VibrantSocialTemplate";
+import EditorialRichTemplate from "@/templates/specialized/EditorialRichTemplate";
+import DataForwardTemplate from "@/templates/specialized/DataForwardTemplate";
+import ModularJourneyTemplate from "@/templates/specialized/ModularJourneyTemplate";
+import ExpertTrustTemplate from "@/templates/specialized/ExpertTrustTemplate";
 import { sanitizeInput } from "@/lib/validation";
 import { Loader2 } from "lucide-react";
 
@@ -107,6 +115,27 @@ export default function PublicPortfolio() {
     );
   }
 
-  // If found, render the actual template with sanitized data
-  return profile ? <StandardTemplate data={profile} /> : null;
+  // If found, render the actual template based on profession
+  if (!profile) return null;
+
+  switch (profile.profession) {
+    case 'engineer':
+      return <DevPreciseTemplate data={profile} />;
+    case 'teacher':
+      return <AcademicCleanTemplate data={profile} />;
+    case 'actor':
+      return <CinemaDramaticTemplate data={profile} />;
+    case 'influencer':
+      return <VibrantSocialTemplate data={profile} />;
+    case 'editor':
+      return <EditorialRichTemplate data={profile} />;
+    case 'manager':
+      return <DataForwardTemplate data={profile} />;
+    case 'student':
+      return <ModularJourneyTemplate data={profile} />;
+    case 'doctor':
+      return <ExpertTrustTemplate data={profile} />;
+    default:
+      return <StandardTemplate data={profile} />;
+  }
 }

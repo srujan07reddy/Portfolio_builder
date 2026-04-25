@@ -23,7 +23,7 @@ export default function HeroSection({ data, themeColor, template }: any) {
   const rolesArray = data.roles ? data.roles.split(',').flatMap((role: string) => [role.trim(), 2000]) : [];
 
   return (
-    <section className="min-h-[80vh] flex flex-col justify-center py-20 scroll-mt-32">
+    <section id="home" className="min-h-[80vh] flex flex-col justify-center py-20 scroll-mt-32">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

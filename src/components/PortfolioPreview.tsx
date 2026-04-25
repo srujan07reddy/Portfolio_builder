@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Monitor, Smartphone, Eye, EyeOff } from "lucide-react";
+import { Monitor, Smartphone, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import profileData from "../content/profile.json";
 import themeData from "../content/theme.json";
 import HeroSection from "./HeroSection";
@@ -10,55 +11,58 @@ import IdentitySection from "./IdentitySection";
 import DomainsSection from "./DomainsSection";
 import ProjectsSection from "./ProjectsSection";
 import ConsultingSection from "./ConsultingSection";
+import CustomSection from "./CustomSection";
+import StandardTemplate from "@/templates/StandardTemplate";
 import Navbar from "./Navbar";
+import { type Portfolio } from "@/lib/portfolio-service";
 
-export default function PortfolioPreview() {
+interface PortfolioPreviewProps {
+  portfolio?: Portfolio | null;
+  projects?: any[];
+}
+
+export default function PortfolioPreview({ portfolio, projects = [] }: PortfolioPreviewProps) {
   const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
   const [showPreview, setShowPreview] = useState(true);
   
-  const themeColor = themeData.theme_color || "Cyan";
-  const template = themeData.template || "Standard";
+  // Format data for templates
+  const themeColor = portfolio?.theme_color || themeData.theme_color || "Cyan";
+  const template = portfolio?.template_choice === "minimalist_modern" ? "Minimalist" : "Standard";
 
-  const templateClasses: Record<string, string> = {
-    Standard: "bg-[#050505] text-gray-300 font-mono",
-    Minimalist: "bg-white text-black font-sans",
-    Corporate: "bg-slate-50 text-slate-900 font-serif"
-  };
-
-  const activeSkin = templateClasses[template] || templateClasses.Standard;
-
-  const renderBlock = (block: any, index: number) => {
-    const rawTitle = block.title || "Section";
-    const cleanName = rawTitle.includes("//") ? rawTitle.split("//")[1].trim() : rawTitle;
-    const sectionId = cleanName.toLowerCase().replace(/\s+/g, "-");
-
-    const props = { 
-      key: index, 
-      id: sectionId, 
-      data: block, 
-      themeColor, 
-      template 
-    };
-
-    switch (block.type) {
-      case 'identity_block': return <IdentitySection {...props} />;
-      case 'domains_block': return <DomainsSection {...props} />;
-      case 'projects_block': return <ProjectsSection {...props} />;
-      case 'consulting_block': return <ConsultingSection {...props} />;
-      default: return null;
+  const siteData = {
+    hero: {
+      name: portfolio?.full_name || "Your Name",
+      roles: portfolio?.professions?.join(", ") || "Strategic Consultant",
+      avatar: "/images/avatar-placeholder.png",
+    },
+    bio: portfolio?.bio || "Professional bio here...",
+    links: {
+      email: portfolio?.social_links?.email || "",
+      github: portfolio?.social_links?.github || "",
+      linkedin: portfolio?.social_links?.linkedin || ""
+    },
+    domains: {
+      list: portfolio?.specialized_data?.expertise_areas?.map((name: string) => ({ name, description: "Expertise in this area." })) || []
+    },
+    projects: projects.map(p => ({
+      name: p.title,
+      description: p.description,
+      tools: p.tech_stack?.join(", ") || ""
+    })),
+    consulting: {
+      headline: portfolio?.specialized_data?.tagline || "Strategic Alignment",
+      body: portfolio?.bio || "Professional consulting services."
     }
   };
 
-  const portfolioContent = (
-    <main className={`min-h-screen transition-colors duration-700 ${activeSkin}`}>
-      <div className="max-w-6xl mx-auto px-6 pb-24">
-        <HeroSection data={profileData.hero} themeColor={themeColor} template={template} />
-        <div className="flex flex-col gap-32">
-          {profileData.page_blocks?.map((block, index) => renderBlock(block, index))}
-        </div>
-      </div>
-    </main>
-  );
+  const activeTheme = {
+    name: themeColor,
+    accent: `bg-${themeColor.toLowerCase()}-500`,
+    text: `text-${themeColor.toLowerCase()}-500`,
+    border: `border-${themeColor.toLowerCase()}-500/50`
+  };
+
+  const portfolioContent = <StandardTemplate siteData={siteData} activeTheme={activeTheme} />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6">
@@ -70,6 +74,13 @@ export default function PortfolioPreview() {
           className="flex justify-between items-center bg-gray-800/50 backdrop-blur-md border border-gray-700 rounded-lg p-4"
         >
           <div className="flex items-center gap-3">
+            <Link 
+              href="/dashboard"
+              className="flex items-center gap-2 px-3 py-2 bg-gray-700/50 hover:bg-gray-700 text-gray-300 rounded-lg border border-gray-600 transition-all mr-4"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm font-medium">Dashboard</span>
+            </Link>
             <h2 className="text-xl font-bold text-white">Portfolio Preview</h2>
             <div className="flex items-center gap-2 ml-6">
               <button
@@ -147,20 +158,14 @@ export default function PortfolioPreview() {
               transition={{ duration: 0.4 }}
               className="flex justify-center items-start py-8"
             >
-              {/* Phone Frame */}
               <div className="relative mx-auto" style={{ width: "390px" }}>
-                {/* Phone Bezel - Outer Frame */}
                 <div 
                   className="absolute inset-0 bg-black rounded-[40px] z-20"
                   style={{
                     border: "12px solid #1a1a1a",
                   }}
                 />
-                
-                {/* Notch */}
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 w-40 h-8 bg-black rounded-b-3xl" />
-
-                {/* Screen Content - Inner */}
                 <div 
                   className="relative z-10 bg-white dark:bg-[#0a0a0a] overflow-hidden rounded-[36px]"
                   style={{ 
@@ -169,7 +174,6 @@ export default function PortfolioPreview() {
                     margin: "12px"
                   }}
                 >
-                  {/* Mobile Content Wrapper */}
                   <div className="w-full h-full overflow-y-auto overflow-x-hidden bg-white dark:bg-[#0a0a0a]">
                     <div className="w-full">
                       {portfolioContent}
@@ -182,7 +186,6 @@ export default function PortfolioPreview() {
         </motion.div>
       </div>
 
-      {/* Preview Status Footer */}
       <div className="max-w-7xl mx-auto mt-8">
         <div className="bg-gray-800/30 border border-gray-700 rounded-lg p-4 text-center text-gray-400 text-sm">
           <p>

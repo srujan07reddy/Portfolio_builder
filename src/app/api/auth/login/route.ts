@@ -26,7 +26,16 @@ export async function POST(req: NextRequest) {
     const { email, password } = body;
 
     // Validate input
-    const { validEmail, validPassword } = validateLoginCredentials(email, password);
+    const result = validateLoginCredentials(email, password);
+    
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error.issues[0]?.message || 'Invalid input' },
+        { status: 400 }
+      );
+    }
+
+    const { email: validEmail, password: validPassword } = result.data;
 
     // Attempt login
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -35,14 +44,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      securityLogger.logAuthAttempt(email, false, clientIp, req.headers.get('user-agent') || 'unknown');
+      securityLogger.logAuthAttempt(validEmail, false, clientIp, req.headers.get('user-agent') || 'unknown');
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
-    securityLogger.logAuthAttempt(email, true, clientIp, req.headers.get('user-agent') || 'unknown');
+    securityLogger.logAuthAttempt(validEmail, true, clientIp, req.headers.get('user-agent') || 'unknown');
 
     return NextResponse.json(
       {
@@ -53,7 +62,7 @@ export async function POST(req: NextRequest) {
       {
         status: 200,
         headers: {
-          'Set-Cookie': `session=${data.session?.access_token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400`,
+          'Set-Cookie': `session=${data.session?.access_token}; HttpOnly; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''} SameSite=Strict; Path=/; Max-Age=86400`,
         },
       }
     );

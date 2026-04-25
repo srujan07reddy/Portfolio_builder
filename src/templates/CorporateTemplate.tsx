@@ -15,16 +15,17 @@ export default function CorporateTemplate({ siteData, activeTheme }: any) {
       {/* PROFESSIONAL NAV */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-slate-100 px-8 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <span className="font-black text-xl tracking-tighter uppercase">{siteData.hero.name}</span>
+          <a href="#home" className="font-black text-xl tracking-tighter uppercase">{siteData.hero.name}</a>
           <div className="flex gap-6 items-center">
-            <span className={`text-[10px] font-bold uppercase tracking-widest ${activeTheme.text}`}>Internal Secure Link</span>
+            <a href="#home" className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors">Home</a>
+            <span className={`text-[10px] font-bold uppercase tracking-widest ${activeTheme.text} hidden md:block`}>Internal Secure Link</span>
             <a href={`mailto:${siteData.links.email}`} className="bg-slate-900 text-white px-5 py-2 rounded-full text-xs font-bold hover:bg-slate-700 transition">Contact</a>
           </div>
         </div>
       </nav>
 
       {/* HERO: STRUCTURED & BOLD */}
-      <section className="py-24 px-8 bg-slate-50 border-b border-slate-200">
+      <section id="home" className="py-24 px-8 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <motion.div initial="hidden" animate="visible" variants={fadeInUp}>
             <h2 className="text-6xl font-black leading-[1.1] mb-8 text-slate-900">
@@ -79,7 +80,7 @@ export default function CorporateTemplate({ siteData, activeTheme }: any) {
           </div>
           <div className="bg-white/5 p-10 rounded-3xl border border-white/10">
             <p className="text-white italic text-xl font-light leading-loose">
-              "{siteData.consulting.sub_body}"
+              &quot;{siteData.consulting.sub_body}&quot;
             </p>
             <div className="mt-8 flex items-center gap-4">
               <div className={`w-8 h-8 rounded ${activeTheme.accent}`}></div>

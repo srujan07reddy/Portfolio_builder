@@ -23,33 +23,27 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { email, password } = body;
-
+    
     // Validate input with strict rules
-    const { validEmail, validPassword } = validateSignupCredentials(email, password);
-
-    // Check if user already exists
-    const { data: existingUser } = await supabase
-      .from('auth.users')
-      .select('id')
-      .eq('email', validEmail)
-      .single();
-
-    if (existingUser) {
+    const result = validateSignupCredentials(body);
+    
+    if (!result.success) {
       return NextResponse.json(
-        { error: 'Email already registered' },
+        { error: result.error.issues[0]?.message || 'Validation failed' },
         { status: 400 }
       );
     }
 
-    // Create new user
+    const { email: validEmail, password: validPassword } = result.data;
+
+    // Create new user (Supabase handles existing user check)
     const { data, error } = await supabase.auth.signUp({
       email: validEmail,
       password: validPassword,
     });
 
     if (error) {
-      securityLogger.logAuthAttempt(email, false, clientIp, req.headers.get('user-agent') || 'unknown');
+      securityLogger.logAuthAttempt(validEmail, false, clientIp, req.headers.get('user-agent') || 'unknown');
       return NextResponse.json(
         { error: error.message || 'Signup failed' },
         { status: 400 }
@@ -79,7 +73,7 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json(
-      { error: 'Signup failed' },
+      { error: 'Signup failed. Please try again later.' },
       { status: 500 }
     );
   }

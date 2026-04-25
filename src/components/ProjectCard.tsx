@@ -7,7 +7,7 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <div className="bg-white/80 backdrop-blur-md border border-slate-200 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
+    <div className="bg-white/60 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-2xl hover:shadow-3xl transition-all">
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-lg font-bold text-slate-900 leading-tight">{project.title}</h3>
         <div className="flex items-center gap-1 text-xs text-slate-500">

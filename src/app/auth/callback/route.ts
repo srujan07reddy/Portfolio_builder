@@ -15,7 +15,19 @@ export async function GET(request: NextRequest) {
     );
     
     // Exchange code for session
-    await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    
+    if (!error && data?.session) {
+      const response = NextResponse.redirect(new URL('/dashboard', request.url));
+      response.cookies.set('session', data.session.access_token, {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 86400,
+      });
+      return response;
+    }
   }
 
   // Redirect to the dashboard

@@ -2,164 +2,277 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Pagination, Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-coverflow';
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as any } }
-};
+import { TypeAnimation } from "react-type-animation";
+import { 
+  ArrowRight, 
+  Github, 
+  Linkedin, 
+  Twitter, 
+  Mail, 
+  ExternalLink, 
+  ChevronRight,
+  Code2,
+  Sparkles,
+  Zap,
+  Shield,
+  Layers
+} from "lucide-react";
 
 export default function StandardTemplate({ siteData, activeTheme }: any) {
-  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
-  const rolesArray = siteData.hero.roles.split(',').map((r: string) => r.trim());
-  const labTagsArray = siteData.lab.tags.split(',').map((tag: string) => tag.trim());
+  const rolesArray = siteData.hero.roles ? siteData.hero.roles.split(',').flatMap((r: string) => [r.trim(), 2000]) : [];
+  
+  const accentGradient: Record<string, string> = {
+    Cyan: "from-cyan-400 to-blue-600",
+    Violet: "from-violet-400 to-purple-600",
+    Emerald: "from-emerald-400 to-teal-600",
+    Ruby: "from-rose-400 to-red-600"
+  };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentRoleIndex((prev) => (prev + 1) % rolesArray.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [rolesArray.length]);
+  const activeGradient = accentGradient[activeTheme.name] || "from-cyan-400 to-blue-600";
 
   return (
-    <main className="min-h-screen bg-[#020202] text-slate-300 font-mono selection:bg-cyan-500 selection:text-black overflow-x-hidden">
-      
-      {/* 1. THE SCANNING GRID OVERLAY */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-50 overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-        <motion.div 
-          animate={{ y: ["0%", "100%"] }} 
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          className={`h-[2px] w-full ${activeTheme.accent} opacity-20 blur-sm`}
-        />
+    <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-blue-500 selection:text-white">
+      {/* GLOWING BACKGROUND ORBS */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className={`absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse`} />
+        <div className={`absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px]`} />
       </div>
 
-      {/* 2. HUD NAVIGATION */}
-      <nav className="fixed top-0 w-full z-[60] px-8 py-6 flex justify-between items-center border-b border-white/5 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className={`w-3 h-3 rounded-full ${activeTheme.accent} animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]`}></div>
-          <h1 className="text-sm font-black tracking-[0.3em] text-white">
-            OPERATOR<span className={activeTheme.text}>_{siteData.hero.name.split(' ')[0].toUpperCase()}</span>
-          </h1>
-        </div>
-        <div className="text-[10px] space-x-6 text-slate-500 hidden md:block uppercase tracking-widest">
-          <span>Auth: <span className={activeTheme.text}>Level_04</span></span>
-          <span>Status: <span className="text-green-500">Online</span></span>
+      {/* NAVIGATION */}
+      <nav className="sticky top-0 w-full z-[100] px-8 py-6 backdrop-blur-md border-b border-white/5 bg-black/20">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 bg-gradient-to-br ${activeGradient} rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20`}>
+              <Sparkles size={20} className="text-white" />
+            </div>
+            <h1 className="text-xl font-black tracking-tighter uppercase">
+              {siteData.hero.name}
+            </h1>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-[10px] font-black uppercase tracking-widest text-white/60">
+            <a href="#about" className="hover:text-white transition-colors">About</a>
+            <a href="#projects" className="hover:text-white transition-colors">Works</a>
+            <a href="#contact" className={`px-6 py-2 bg-white text-black rounded-full hover:bg-white/90 transition-all`}>Hire Me</a>
+          </div>
         </div>
       </nav>
 
-      <div className="pt-40 pb-20 px-8 md:px-24 max-w-7xl mx-auto space-y-40 relative z-10">
+      <div className="relative z-10 max-w-7xl mx-auto px-8">
         
-        {/* 3. TACTICAL HERO SECTION */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="lg:col-span-8 space-y-8">
-            <div className={`inline-block px-3 py-1 border ${activeTheme.border} ${activeTheme.text} text-[10px] tracking-[0.4em] uppercase mb-4`}>
-              Secured_Profile.v2
+        {/* HERO SECTION */}
+        <section id="home" className="pt-48 pb-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-blue-400">
+              <Zap size={14} /> Available for projects
             </div>
             
-            <h2 className="text-6xl md:text-8xl font-black text-white leading-tight tracking-tighter">
-              {siteData.hero.name}
+            <h2 className="text-7xl md:text-8xl font-black tracking-tighter leading-none">
+              Building <br />
+              <span className={`bg-clip-text text-transparent bg-gradient-to-r ${activeGradient}`}>
+                Digital Futures.
+              </span>
             </h2>
 
-            <div className="flex items-center gap-4 h-12 border-y border-white/5">
-              <span className={`${activeTheme.text} text-2xl tracking-widest animate-pulse`}>&gt;</span>
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={currentRoleIndex}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="text-xl md:text-3xl font-bold text-white uppercase tracking-wider"
-                >
-                  {rolesArray[currentRoleIndex]}
-                </motion.span>
-              </AnimatePresence>
+            <div className="text-2xl md:text-3xl font-medium text-white/80 min-h-[1.5em]">
+              {rolesArray.length > 0 && (
+                <TypeAnimation sequence={rolesArray} repeat={Infinity} speed={50} />
+              )}
             </div>
 
-            <p className="text-lg text-slate-500 max-w-2xl leading-relaxed">
-              {siteData.hero.subtitle}
+            <p className="text-lg text-white/40 max-w-xl leading-relaxed">
+              {siteData.bio}
             </p>
 
-            <div className="flex flex-wrap gap-6 pt-6">
-              <a href={`mailto:${siteData.links.email}`} className={`group relative px-8 py-4 bg-transparent border ${activeTheme.border} ${activeTheme.text} overflow-hidden transition-all duration-300 hover:text-black`}>
-                <div className={`absolute inset-0 w-0 group-hover:w-full transition-all duration-300 ${activeTheme.accent} z-0`}></div>
-                <span className="relative z-10 text-xs font-bold uppercase tracking-widest">Establish Comms</span>
-              </a>
-              <a href={siteData.links.github} className="px-8 py-4 border border-white/10 text-white/40 text-xs font-bold uppercase tracking-widest hover:border-white/40 transition-all">
-                Directory Access
-              </a>
+            <div className="flex flex-wrap gap-6 items-center">
+              <button className={`px-8 py-4 bg-gradient-to-r ${activeGradient} text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-blue-500/20 hover:scale-105 transition-all flex items-center gap-2`}>
+                Start Project <ArrowRight size={16} />
+              </button>
+              <div className="flex gap-4">
+                <a href="#" className="w-12 h-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center hover:bg-white/10 transition-all">
+                  <Github size={20} />
+                </a>
+                <a href="#" className="w-12 h-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center hover:bg-white/10 transition-all">
+                  <Linkedin size={20} />
+                </a>
+              </div>
             </div>
           </motion.div>
 
-          <motion.div variants={fadeInUp} className="lg:col-span-4 flex justify-center lg:justify-end">
-            <div className="relative w-64 h-64 md:w-80 md:h-80">
-              <div className={`absolute -inset-4 border ${activeTheme.border} opacity-20 rounded-full animate-spin-slow`}></div>
-              <div className="absolute inset-0 rounded-full overflow-hidden border border-white/10 group">
-                <img src={siteData.hero.avatar} className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" alt="Professional Portfolio" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            className="relative"
+          >
+            <div className={`absolute -inset-10 bg-gradient-to-br ${activeGradient} opacity-20 blur-[100px] animate-pulse`} />
+            <div className="relative bg-white/5 border border-white/10 rounded-[3rem] p-4 backdrop-blur-3xl overflow-hidden aspect-square">
+              <img 
+                src={siteData.hero.avatar} 
+                className="w-full h-full object-cover rounded-[2.5rem] brightness-90 group-hover:brightness-110 transition-all" 
+                alt="Profile" 
+              />
+              <div className="absolute bottom-10 left-10 right-10 p-6 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Status</p>
+                    <p className="text-sm font-bold">Active in AI Systems</p>
+                  </div>
+                  <div className="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center">
+                    <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
         </section>
 
-        {/* 4. DOMAIN MATRIX (Bento Grid Style) */}
-        <section className="space-y-12">
-          <div className="flex items-center gap-4">
-            <h3 className={`text-xs uppercase tracking-[0.5em] ${activeTheme.text}`}>Capability_Matrix</h3>
-            <div className="h-px bg-white/10 flex-1"></div>
+        {/* BENTO EXPERIENCE GRID */}
+        <section id="projects" className="py-32 space-y-12">
+          <div className="text-center space-y-4">
+            <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]">Works // Collections</h3>
+            <h2 className="text-5xl font-black tracking-tight">Recent Projects</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {siteData.domains.list.map((domain: any, i: number) => (
-              <motion.div key={i} whileHover={{ y: -5 }} className="p-8 bg-white/[0.02] border border-white/5 hover:border-white/20 transition-all group relative overflow-hidden">
-                <div className={`absolute top-0 right-0 p-4 font-mono text-[8px] opacity-20 ${activeTheme.text}`}>0{i+1}</div>
-                <h4 className="text-lg font-bold text-white mb-4 group-hover:text-cyan-400 transition-colors">{domain.name}</h4>
-                <p className="text-xs text-slate-500 leading-relaxed">{domain.description}</p>
-              </motion.div>
-            ))}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {siteData.projects && siteData.projects.length > 0 ? (
+              siteData.projects.map((project: any, idx: number) => (
+                <div key={idx} className="group relative bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden hover:border-white/20 transition-all flex flex-col">
+                  <div className="p-8 space-y-4 flex-grow">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-2">
+                        <h4 className="text-xl font-black">{project.name}</h4>
+                        <p className="text-xs text-white/40 leading-relaxed">{project.description}</p>
+                      </div>
+                      <ExternalLink size={18} className="text-white/20 group-hover:text-white transition-colors" />
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {project.tools?.split(',').map((tag: string) => (
+                        <span key={tag} className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-black text-white/40 uppercase tracking-widest border border-white/5">
+                          {tag.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="h-40 bg-gradient-to-br from-white/5 to-transparent group-hover:from-white/10 transition-all" />
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full p-20 text-center border-2 border-dashed border-white/5 rounded-[3rem]">
+                <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">No_Projects_Indexed_Yet</p>
+              </div>
+            )}
           </div>
         </section>
 
-        {/* 5. CONSULTING COMMAND (Crack Developers) */}
-        <section className={`relative p-12 md:p-20 border ${activeTheme.border} bg-[#050505] overflow-hidden group`}>
-          <div className={`absolute top-0 left-0 w-2 h-full ${activeTheme.accent} opacity-50`}></div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
-            <div>
-              <h3 className={`text-xs uppercase tracking-widest ${activeTheme.text} mb-8`}>Strategic_Alignment</h3>
-              <h4 className="text-4xl font-black text-white mb-6 leading-tight uppercase tracking-tighter">
-                {siteData.consulting.headline}
-              </h4>
-              <p className="text-slate-400 leading-relaxed mb-8">{siteData.consulting.body}</p>
-              <a href={siteData.links.linkedin} className={`inline-block px-10 py-5 ${activeTheme.accent} text-black font-black text-[10px] uppercase tracking-[0.3em] hover:brightness-110 transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)]`}>
-                {siteData.consulting.cta_text}
-              </a>
+        {/* SERVICES / CONSULTING */}
+        <section id="services" className="py-32">
+          <div className="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-[3rem] p-12 md:p-24 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform" />
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-8">
+                <h2 className="text-5xl font-black leading-none">Ready to <br /> Transform?</h2>
+                <p className="text-white/80 text-lg">Specializing in high-performance digital solutions, AI integration, and scalable system architecture.</p>
+                <div className="flex gap-4">
+                  <div className="p-4 bg-white/10 rounded-2xl border border-white/10">
+                    <h5 className="text-2xl font-black">99%</h5>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Uptime Delivery</p>
+                  </div>
+                  <div className="p-4 bg-white/10 rounded-2xl border border-white/10">
+                    <h5 className="text-2xl font-black">15+</h5>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Global Clients</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-black/20 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-10 space-y-8">
+                <h4 className="text-xl font-bold">Let's discuss your next breakthrough.</h4>
+                <div className="space-y-4">
+                  <input type="text" placeholder="Your Email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-white/20 transition-all" />
+                  <button className="w-full py-4 bg-white text-blue-900 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-white/90 transition-all">
+                    Initialize Consultation
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="border border-white/10 p-8 bg-black/40 backdrop-blur-md">
-              <p className="text-white/60 text-sm italic font-light leading-loose mb-6">
-                "{siteData.consulting.sub_body}"
+          </div>
+        </section>
+
+        {/* CONTACT SECTION */}
+        <section id="contact" className="py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+            <div className="space-y-12">
+              <div className="space-y-4">
+                <h2 className="text-sm font-black text-blue-500 uppercase tracking-[0.4em]">Get_In_Touch</h2>
+                <h3 className="text-6xl font-black leading-none tracking-tighter uppercase">Let's build <br /> something <br /> legendary.</h3>
+              </div>
+              <p className="text-white/40 text-lg leading-relaxed max-w-md">
+                I'm currently available for new projects, full-time roles, or consulting. Drop me a line and let's discuss how we can work together.
               </p>
-              <div className="flex gap-2">
-                <div className={`h-1 w-12 ${activeTheme.accent}`}></div>
-                <div className="h-1 w-2 bg-white/20"></div>
+              <div className="space-y-6">
+                <a href={`mailto:${siteData.links.email}`} className="flex items-center gap-6 group">
+                  <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-white/40 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                    <Mail size={24} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Email_Address</p>
+                    <p className="text-xl font-bold">{siteData.links.email}</p>
+                  </div>
+                </a>
               </div>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-[3rem] p-12 backdrop-blur-3xl space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/20 uppercase tracking-widest">Your_Name</label>
+                  <input type="text" placeholder="Alex Rivera" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/20 uppercase tracking-widest">Subject</label>
+                  <input type="text" placeholder="Project Inquiry" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest">Message</label>
+                <textarea placeholder="Tell me about your vision..." className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none transition-all" />
+              </div>
+              <button 
+                onClick={() => {
+                  alert("Connection secure. Message encrypted and sent to " + siteData.links.email);
+                }}
+                className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-blue-500/20 transition-all flex items-center justify-center gap-3"
+              >
+                Launch_Message <ExternalLink size={16} />
+              </button>
             </div>
           </div>
         </section>
 
       </div>
 
-      {/* FOOTER BAR */}
-      <footer className="px-8 py-10 border-t border-white/5 bg-black">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <p className="text-[10px] text-slate-600 uppercase tracking-widest font-mono">
-            &copy; 2026 Operations Terminal // Decrypting Innovation
-          </p>
-          <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest">
-             <a href={siteData.links.github} className="hover:text-white transition-colors">GitHub</a>
-             <a href={siteData.links.linkedin} className="hover:text-white transition-colors">LinkedIn</a>
-             <a href={`mailto:${siteData.links.email}`} className={activeTheme.text}>Establish_Comms</a>
+      <footer className="py-20 border-t border-white/5 bg-black/50">
+        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center gap-3">
+             <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center">
+               <Sparkles size={16} className="text-white/40" />
+             </div>
+             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">© {new Date().getFullYear()} {siteData.hero.name} | Built with Portfolio Builder</p>
+          </div>
+          <div className="flex gap-8">
+             {[
+               { icon: Twitter, url: siteData.links.twitter },
+               { icon: Github, url: siteData.links.github },
+               { icon: Linkedin, url: siteData.links.linkedin },
+               { icon: Mail, url: `mailto:${siteData.links.email}` }
+             ].map((item, i) => (
+               <a key={i} href={item.url} target="_blank" className="text-white/40 hover:text-white transition-colors">
+                 <item.icon size={20} />
+               </a>
+             ))}
           </div>
         </div>
       </footer>

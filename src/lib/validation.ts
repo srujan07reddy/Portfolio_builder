@@ -13,6 +13,12 @@ export const passwordSchema = z
   .regex(/[!@#$%^&*]/, 'Password must contain special characters (!@#$%^&*)')
   .max(128, 'Password is too long');
 
+// Signup schema for unified validation
+export const signupSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});
+
 // Username validation schema
 export const usernameSchema = z
   .string()
@@ -65,14 +71,15 @@ export function validateAndSanitizeProfile(data: any) {
 
 // Validate login credentials
 export function validateLoginCredentials(email: string, password: string) {
-  const validEmail = emailSchema.parse(email);
-  const validPassword = z.string().min(1).parse(password);
-  return { validEmail, validPassword };
+  const result = z.object({
+    email: emailSchema,
+    password: z.string().min(1, 'Password is required'),
+  }).safeParse({ email, password });
+  
+  return result;
 }
 
 // Validate signup credentials
-export function validateSignupCredentials(email: string, password: string) {
-  const validEmail = emailSchema.parse(email);
-  const validPassword = passwordSchema.parse(password);
-  return { validEmail, validPassword };
+export function validateSignupCredentials(data: any) {
+  return signupSchema.safeParse(data);
 }

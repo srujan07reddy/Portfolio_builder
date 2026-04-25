@@ -6,9 +6,19 @@ export interface Portfolio {
   username: string;
   full_name: string;
   template_choice: string;
+  profession?: any;
+  professions?: string[];
+  category?: 'professional' | 'academic';
   bio: string;
   skills?: string[];
   social_links?: Record<string, string>;
+  specialized_data?: Record<string, any>;
+  sections?: Record<string, boolean>;
+  custom_sections?: Array<{ title: string; content: string }>;
+  theme_color?: string;
+  avatar_url?: string;
+  license_key?: string;
+  is_public?: boolean;
 }
 
 export interface Project {
@@ -21,30 +31,53 @@ export interface Project {
 }
 
 /**
- * Fetch portfolio by user ID
+ * Fetch all portfolios for a user
  */
-export async function getPortfolioByUserId(userId: string): Promise<Portfolio | null> {
+export async function getPortfoliosByUserId(userId: string): Promise<Portfolio[]> {
   try {
     const { data, error } = await supabase
       .from("portfolios")
       .select("*")
       .eq("owner_id", userId)
-      .single();
+      .order("created_at", { ascending: false });
 
     if (error) {
-      if (error.code === "PGRST116") {
-        // No rows found - not an error, just no portfolio yet
-        return null;
-      }
-      console.error("Error fetching portfolio:", error);
-      return null;
+      console.error("Error fetching portfolios:", error.message);
+      return [];
     }
 
+    return data as Portfolio[];
+  } catch (err) {
+    console.error("Unexpected error fetching portfolios:", err);
+    return [];
+  }
+}
+
+/**
+ * Fetch a specific portfolio by ID
+ */
+export async function getPortfolioById(id: string): Promise<Portfolio | null> {
+  try {
+    const { data, error } = await supabase
+      .from("portfolios")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) return null;
     return data as Portfolio;
   } catch (err) {
-    console.error("Unexpected error fetching portfolio:", err);
     return null;
   }
+}
+
+/**
+ * Fetch portfolio by user ID (Backwards compatibility / helper for primary)
+ */
+export async function getPortfolioByUserId(userId: string): Promise<Portfolio | null> {
+  const portfolios = await getPortfoliosByUserId(userId);
+  // Return the published one, or the most recent one
+  return portfolios.find(p => p.is_public) || portfolios[0] || null;
 }
 
 /**
@@ -56,14 +89,18 @@ export async function savePortfolio(data: Partial<Portfolio>): Promise<Portfolio
       throw new Error("owner_id is required to save portfolio");
     }
 
+    // Filter data to only include core columns to prevent 400 errors if schema is old
+    const { id, owner_id, username, full_name, bio, template_choice, profession, is_public } = data;
+    const cleanData = { id, owner_id, username, full_name, bio, template_choice, profession, is_public };
+
     const { data: result, error } = await supabase
       .from("portfolios")
-      .upsert(data, { onConflict: "owner_id" })
+      .upsert(cleanData)
       .select()
       .single();
 
     if (error) {
-      console.error("Error saving portfolio:", error);
+      console.error("Error saving portfolio:", error.message, error.details, error.hint, error.code);
       return null;
     }
 
@@ -71,6 +108,30 @@ export async function savePortfolio(data: Partial<Portfolio>): Promise<Portfolio
   } catch (err) {
     console.error("Unexpected error saving portfolio:", err);
     return null;
+  }
+}
+
+/**
+ * Set a portfolio as the primary published one
+ */
+export async function publishPortfolio(portfolioId: string, userId: string): Promise<boolean> {
+  try {
+    // 1. Unpublish all other portfolios for this user
+    await supabase
+      .from("portfolios")
+      .update({ is_public: false })
+      .eq("owner_id", userId);
+
+    // 2. Publish the target portfolio
+    const { error } = await supabase
+      .from("portfolios")
+      .update({ is_public: true })
+      .eq("id", portfolioId)
+      .eq("owner_id", userId);
+
+    return !error;
+  } catch (err) {
+    return false;
   }
 }
 
@@ -86,7 +147,7 @@ export async function getProjectsByPortfolioId(portfolioId: string): Promise<Pro
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching projects:", error);
+      console.error("Error fetching projects:", error.message, error.details, error.hint, error.code);
       return [];
     }
 
@@ -116,7 +177,7 @@ export async function createProject(project: Omit<Project, "id" | "created_at">)
       .single();
 
     if (error) {
-      console.error("Error creating project:", error);
+      console.error("Error creating project:", error.message, error.details, error.hint, error.code);
       return null;
     }
 

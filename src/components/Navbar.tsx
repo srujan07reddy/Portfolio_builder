@@ -21,19 +21,25 @@ export default function Navbar() {
   };
 
   // 3. Auto-generate the links based on your CMS data
-  const navLinks = blocks.map((block: any) => {
-    const rawTitle = block.title || "Section";
-    // Cleans up "01 // IDENTITY" to just "IDENTITY"
-    const cleanName = rawTitle.includes("//") ? rawTitle.split("//")[1].trim() : rawTitle;
-    // Creates a safe scroll ID like "identity" or "custom-section"
-    const sectionId = cleanName.toLowerCase().replace(/\s+/g, "-");
+  const navLinks = [
+    {
+      name: "HOME",
+      href: "#home",
+      icon: <Terminal className="w-4 h-4" />
+    },
+    ...blocks.map((block: any) => {
+      const rawTitle = block.title || "Section";
+      const cleanName = rawTitle.includes("//") ? rawTitle.split("//")[1].trim() : rawTitle;
+      const sectionId = cleanName.toLowerCase().replace(/\s+/g, "-");
 
-    return {
-      name: cleanName,
-      href: `#${sectionId}`,
-      icon: getIcon(block.type)
-    };
-  });
+      return {
+        name: cleanName,
+        href: `#${sectionId}`,
+        icon: getIcon(block.type)
+      };
+    })
+  ];
+
 
   return (
     <motion.nav 

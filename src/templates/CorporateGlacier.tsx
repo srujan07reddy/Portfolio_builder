@@ -26,14 +26,15 @@ export default function CorporateGlacierTemplate({ siteData, activeTheme }: any)
       {/* PREMIUM NAVIGATION */}
       <nav className="fixed top-0 w-full z-50 px-8 py-6 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
+          <a href="#home" className="flex items-center gap-4 group">
             <div className="w-3 h-3 rounded-full bg-blue-600"></div>
             <h1 className="text-lg font-black tracking-tight text-slate-900">
               {siteData.hero.name}
             </h1>
-          </div>
+          </a>
           <div className="flex gap-6 items-center">
-            <span className="text-xs text-slate-600 uppercase tracking-widest">
+            <a href="#home" className="text-xs text-slate-600 uppercase tracking-widest hover:text-blue-600 transition-colors">Home</a>
+            <span className="text-xs text-slate-600 uppercase tracking-widest hidden md:block">
               Strategic Systems & Secure Innovation
             </span>
             <a href={`mailto:${siteData.links?.email || 'contact@example.com'}`} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider transition-all rounded-lg">
@@ -46,7 +47,7 @@ export default function CorporateGlacierTemplate({ siteData, activeTheme }: any)
       <div className="pt-32 pb-20 px-8 md:px-24 max-w-7xl mx-auto space-y-32 relative z-10">
 
         {/* PREMIUM HERO SECTION */}
-        <section className="text-center space-y-12">
+        <section id="home" className="text-center space-y-12">
           <motion.div initial="hidden" animate="visible" variants={fadeInUp}>
             <div className="inline-block px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-widest rounded-full mb-8">
               Premium Strategy Consultant
