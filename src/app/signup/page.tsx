@@ -119,7 +119,7 @@ export default function SignUp() {
               <div className="space-y-2">
                 <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Verification Sent</h3>
                 <p className="text-slate-500 text-sm font-medium">
-                  We've sent a secure link to your email. Please activate your account to proceed.
+                  We&apos;ve sent a secure link to your email. Please activate your account to proceed.
                 </p>
               </div>
               <Link

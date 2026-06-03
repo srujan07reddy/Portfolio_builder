@@ -206,7 +206,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={async () => {
-                    await supabase.auth.signInWithOAuth({ provider: 'zoho', options: { redirectTo: `${window.location.origin}/dashboard` } });
+                    await supabase.auth.signInWithOAuth({ provider: 'zoho' as any, options: { redirectTo: `${window.location.origin}/dashboard` } });
                   }}
                   className="flex items-center justify-center gap-3 px-4 py-3 bg-[#f0483e] border border-[#f0483e] rounded-xl hover:bg-[#d0382e] transition-all text-[10px] font-black uppercase tracking-widest text-white shadow-lg"
                 >

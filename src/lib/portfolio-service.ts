@@ -89,9 +89,30 @@ export async function savePortfolio(data: Partial<Portfolio>): Promise<Portfolio
       throw new Error("owner_id is required to save portfolio");
     }
 
-    // Filter data to only include core columns to prevent 400 errors if schema is old
-    const { id, owner_id, username, full_name, bio, template_choice, profession, is_public } = data;
-    const cleanData = { id, owner_id, username, full_name, bio, template_choice, profession, is_public };
+    // Filter data to only include valid database columns
+    const cleanData: any = {};
+    if (data.id) cleanData.id = data.id;
+    if (data.owner_id) cleanData.owner_id = data.owner_id;
+    if (data.username) cleanData.username = data.username;
+    if (data.full_name !== undefined) cleanData.full_name = data.full_name;
+    if (data.bio !== undefined) cleanData.bio = data.bio;
+    if (data.avatar_url !== undefined) cleanData.avatar_url = data.avatar_url;
+    if (data.template_choice !== undefined) cleanData.template_choice = data.template_choice;
+    
+    // Map professions / profession correctly to 'professions' column (array of text)
+    if (Array.isArray(data.professions)) {
+      cleanData.professions = data.professions;
+    } else if (data.profession) {
+      cleanData.professions = [data.profession];
+    }
+    
+    if (data.social_links !== undefined) cleanData.social_links = data.social_links;
+    if (data.specialized_data !== undefined) cleanData.specialized_data = data.specialized_data;
+    if (data.sections !== undefined) cleanData.sections = data.sections;
+    if (data.custom_sections !== undefined) cleanData.custom_sections = data.custom_sections;
+    if (data.theme_color !== undefined) cleanData.theme_color = data.theme_color;
+    if (data.is_public !== undefined) cleanData.is_public = data.is_public;
+    if (data.license_key !== undefined) cleanData.license_key = data.license_key;
 
     const { data: result, error } = await supabase
       .from("portfolios")

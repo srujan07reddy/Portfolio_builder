@@ -33,6 +33,132 @@ const ResumeAnalyzer = dynamic(() => import("@/components/ResumeAnalyzer"), {
   ),
 });
 
+const templates = [
+  {
+    id: "specialized_v1",
+    name: "Specialized Industry (Recommended)",
+    description: "Custom layout automatically tailored for your selected industry (e.g. Developer console, Academic journal, Film reel).",
+    preview: (
+      <div className="w-full h-24 bg-gradient-to-br from-indigo-950 to-slate-900 rounded-lg border border-indigo-500/20 p-2 flex flex-col justify-between relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle,#6366f1_1px,transparent_1px)] bg-[size:10px_10px] opacity-10"></div>
+        <div className="flex justify-between items-center z-10">
+          <div className="w-4 h-4 bg-indigo-500/30 rounded-md border border-indigo-500/50 flex items-center justify-center">
+            <Sparkles size={8} className="text-indigo-400" />
+          </div>
+          <span className="text-[7px] font-black uppercase text-indigo-400 bg-indigo-500/20 px-1.5 py-0.5 rounded">Tailored</span>
+        </div>
+        <div className="space-y-1 text-center my-1 z-10">
+          <div className="w-24 h-2.5 bg-white/20 rounded mx-auto border border-white/5 flex items-center justify-center">
+            <span className="text-[5px] font-black uppercase tracking-widest text-white/80">Developer // Scholar</span>
+          </div>
+          <div className="w-20 h-1 bg-indigo-400/40 rounded mx-auto"></div>
+        </div>
+        <div className="flex justify-center gap-1 z-10">
+          <div className="w-4 h-4 bg-white/5 rounded-full border border-white/10 flex items-center justify-center">
+            <Cpu size={8} className="text-indigo-400" />
+          </div>
+          <div className="w-4 h-4 bg-white/5 rounded-full border border-white/10 flex items-center justify-center">
+            <GraduationCap size={8} className="text-indigo-400" />
+          </div>
+          <div className="w-4 h-4 bg-white/5 rounded-full border border-white/10 flex items-center justify-center">
+            <BookOpen size={8} className="text-indigo-400" />
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: "Standard",
+    name: "Standard (Tactical)",
+    description: "Immersive neon dark-mode theme featuring smooth glowing gradients and active cyberpunk elements.",
+    preview: (
+      <div className="w-full h-24 bg-[#050505] rounded-lg border border-slate-800 p-2 flex flex-col justify-between relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-8 h-8 bg-blue-500/20 rounded-full blur-md"></div>
+        <div className="flex justify-between items-center">
+          <div className="w-4 h-4 bg-cyan-500/30 rounded-md border border-cyan-500/50"></div>
+          <div className="flex gap-1.5">
+            <div className="w-4 h-1 bg-slate-700 rounded"></div>
+            <div className="w-4 h-1 bg-slate-700 rounded"></div>
+          </div>
+        </div>
+        <div className="space-y-1">
+          <div className="w-16 h-2 bg-gradient-to-r from-cyan-400 to-blue-500 rounded"></div>
+          <div className="w-24 h-1.5 bg-slate-800 rounded"></div>
+          <div className="w-20 h-1 bg-slate-800 rounded"></div>
+        </div>
+        <div className="flex gap-1">
+          <div className="w-6 h-3 bg-cyan-500/20 border border-cyan-500/30 rounded-sm"></div>
+          <div className="w-6 h-3 bg-slate-900 border border-slate-800 rounded-sm"></div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: "Corporate_Glacier",
+    name: "Corporate Glacier",
+    description: "Sleek, light-theme layout featuring clean dot matrices, slide banners, and floating glassmorphism cards.",
+    preview: (
+      <div className="w-full h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg border border-slate-200 p-2 flex flex-col justify-between relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle,#cbd5e1_1px,transparent_1px)] bg-[size:6px_6px] opacity-30"></div>
+        <div className="flex justify-between items-center border-b border-slate-200 pb-1 z-10">
+          <div className="w-8 h-1.5 bg-blue-600 rounded-full"></div>
+          <div className="w-12 h-2.5 bg-blue-600 rounded-md"></div>
+        </div>
+        <div className="space-y-1 text-center z-10 my-1">
+          <div className="w-20 h-2 bg-slate-800 rounded mx-auto"></div>
+          <div className="w-28 h-1 bg-slate-500 rounded mx-auto"></div>
+        </div>
+        <div className="grid grid-cols-3 gap-1 z-10">
+          <div className="h-4 bg-white border border-slate-200 rounded shadow-sm"></div>
+          <div className="h-4 bg-white border border-slate-200 rounded shadow-sm"></div>
+          <div className="h-4 bg-white border border-slate-200 rounded shadow-sm"></div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: "Corporate",
+    name: "Corporate",
+    description: "Traditional corporate design utilizing bold headings, side image displays, and grid highlights.",
+    preview: (
+      <div className="w-full h-24 bg-white rounded-lg border border-slate-200 p-2 flex flex-col justify-between relative overflow-hidden">
+        <div className="flex justify-between items-center border-b border-slate-100 pb-1">
+          <div className="w-10 h-2 bg-slate-900 rounded"></div>
+          <div className="w-6 h-3 bg-slate-900 rounded-full"></div>
+        </div>
+        <div className="grid grid-cols-2 gap-2 my-1 items-center">
+          <div className="space-y-1">
+            <div className="w-14 h-2 bg-slate-900 rounded"></div>
+            <div className="w-10 h-1 bg-slate-400 rounded"></div>
+          </div>
+          <div className="h-10 bg-slate-200 rounded-md border border-slate-350"></div>
+        </div>
+        <div className="h-1 bg-blue-500 rounded-full w-full"></div>
+      </div>
+    )
+  },
+  {
+    id: "Minimalist",
+    name: "Minimalist",
+    description: "Ultra-clean editorial aesthetic focused on immense typography, generous spacing, and absolute simplicity.",
+    preview: (
+      <div className="w-full h-24 bg-gray-50 rounded-lg border border-slate-200 p-2 flex flex-col justify-between relative overflow-hidden">
+        <div className="flex justify-between items-center">
+          <div className="text-[6px] font-black tracking-tighter">S.REDDY</div>
+          <div className="w-6 h-1 bg-slate-300 rounded"></div>
+        </div>
+        <div className="space-y-1 my-2">
+          <div className="text-[7px] font-black leading-none text-slate-800">BUILDING <br /> FUTURE.</div>
+          <div className="w-16 h-1 bg-slate-400 rounded"></div>
+        </div>
+        <div className="border-t border-slate-200 pt-1">
+          <div className="w-8 h-1 bg-slate-300 rounded"></div>
+        </div>
+      </div>
+    )
+  }
+];
+
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -215,7 +341,20 @@ export default function Dashboard() {
     }
   };
 
-  const handleLogout = async () => { await supabase.auth.signOut(); localStorage.removeItem("user_session"); router.push("/"); };
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Supabase signOut error:", err);
+    }
+    localStorage.removeItem("user_session");
+    try {
+      await fetch("/api/auth/session", { method: "DELETE" });
+    } catch (err) {
+      console.error("Session cookie delete error:", err);
+    }
+    router.push("/");
+  };
 
   const handleCreatePortfolio = async () => {
     if (!userId || !profile.username.trim()) {
@@ -1042,6 +1181,7 @@ export default function Dashboard() {
                         <AnimatePresence>
                           {sections[item.key as keyof typeof sections] && (
                             <motion.div
+                              key={`${item.key}-content`}
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
@@ -1195,7 +1335,7 @@ export default function Dashboard() {
                 <div className="space-y-12">
                   <div className="flex flex-col gap-2">
                     <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">Design & Industry</h2>
-                    <p className="text-sm text-slate-500 font-medium">Customize your portfolio's visual identity and template.</p>
+                    <p className="text-sm text-slate-500 font-medium">Customize your portfolio&apos;s visual identity and template.</p>
                   </div>
 
                   {/* Template Selection */}
@@ -1444,17 +1584,39 @@ export default function Dashboard() {
                   <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">Settings</h2>
                   <p className="text-slate-600">Configure your portfolio preferences.</p>
                   <div>
-                    <label className="block text-sm font-bold text-slate-900 mb-2">Template Choice</label>
-                    <select
-                      value={profile.template_choice}
-                      onChange={(e) => setProfile({ ...profile, template_choice: e.target.value })}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
-                    >
-                      <option value="Corporate_Glacier">Corporate Glacier (Premium Strategy)</option>
-                      <option value="Standard">Standard (Tactical)</option>
-                      <option value="Corporate">Corporate (Professional)</option>
-                      <option value="Minimalist">Minimalist (Clean)</option>
-                    </select>
+                    <label className="block text-sm font-bold text-slate-900 mb-4">Template Choice</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {templates.map((tpl) => {
+                        const isActive = profile.template_choice === tpl.id;
+                        return (
+                          <motion.button
+                            key={tpl.id}
+                            type="button"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setProfile({ ...profile, template_choice: tpl.id })}
+                            className={`p-4 rounded-[2rem] border-2 text-left transition-all flex flex-col justify-between h-full bg-white relative overflow-hidden group ${
+                              isActive
+                                ? "border-blue-500 shadow-xl shadow-blue-500/5 bg-blue-50/10"
+                                : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
+                            }`}
+                          >
+                            <div className="w-full mb-4 rounded-xl overflow-hidden bg-slate-100 p-1 border border-slate-100 group-hover:border-slate-200 transition-all">
+                              {tpl.preview}
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-black text-xs uppercase tracking-wider text-slate-900">{tpl.name}</h4>
+                                {isActive && (
+                                  <span className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white text-[9px] font-bold shadow-md shadow-blue-500/20">✓</span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-400 leading-normal">{tpl.description}</p>
+                            </div>
+                          </motion.button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}

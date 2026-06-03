@@ -250,7 +250,7 @@ export default function LandingPage() {
             </div>
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8">
               <p className="text-slate-700 text-sm leading-loose mb-6 italic">
-                "Portfolio Builder transformed my professional presence overnight. The Corporate Glacier template perfectly captures the premium aesthetic my enterprise clients expect, and the security features give me complete peace of mind."
+                &quot;Portfolio Builder transformed my professional presence overnight. The Corporate Glacier template perfectly captures the premium aesthetic my enterprise clients expect, and the security features give me complete peace of mind.&quot;
               </p>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">

@@ -79,6 +79,7 @@ export default function AIChat({ currentData, onDataUpdate }: AIChatProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            key="chat-window"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}

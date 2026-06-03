@@ -13,6 +13,17 @@ import ProjectsSection from "./ProjectsSection";
 import ConsultingSection from "./ConsultingSection";
 import CustomSection from "./CustomSection";
 import StandardTemplate from "@/templates/StandardTemplate";
+import DevPreciseTemplate from "@/templates/specialized/DevPreciseTemplate";
+import AcademicCleanTemplate from "@/templates/specialized/AcademicCleanTemplate";
+import CinemaDramaticTemplate from "@/templates/specialized/CinemaDramaticTemplate";
+import VibrantSocialTemplate from "@/templates/specialized/VibrantSocialTemplate";
+import EditorialRichTemplate from "@/templates/specialized/EditorialRichTemplate";
+import DataForwardTemplate from "@/templates/specialized/DataForwardTemplate";
+import ModularJourneyTemplate from "@/templates/specialized/ModularJourneyTemplate";
+import ExpertTrustTemplate from "@/templates/specialized/ExpertTrustTemplate";
+import CorporateGlacierTemplate from "@/templates/CorporateGlacier";
+import CorporateTemplate from "@/templates/CorporateTemplate";
+import MinimalistTemplate from "@/templates/MinimalistTemplate";
 import Navbar from "./Navbar";
 import { type Portfolio } from "@/lib/portfolio-service";
 
@@ -62,7 +73,115 @@ export default function PortfolioPreview({ portfolio, projects = [] }: Portfolio
     border: `border-${themeColor.toLowerCase()}-500/50`
   };
 
-  const portfolioContent = <StandardTemplate siteData={siteData} activeTheme={activeTheme} />;
+  const profileData = portfolio ? {
+    ...portfolio,
+    profession: portfolio.professions?.[0] || portfolio.profession || "general",
+  } : null;
+
+  const getTemplateBg = (prof?: string, templateChoice?: string) => {
+    if (prof && prof !== 'general') {
+      switch (prof) {
+        case 'engineer':
+        case 'architect':
+        case 'data_scientist':
+          return "bg-[#070807]";
+        case 'teacher':
+        case 'scholar':
+          return "bg-[#FAF9F6]";
+        case 'actor':
+          return "bg-black";
+        case 'influencer':
+        case 'player':
+        case 'coach':
+        case 'scout':
+          return "bg-slate-50";
+        case 'editor':
+        case 'artist':
+          return "bg-[#fafaf9]";
+        case 'manager':
+        case 'executive':
+        case 'coordinator':
+          return "bg-[#0B0F19]";
+        case 'student':
+          return "bg-[#F8FAFC]";
+        case 'doctor':
+        case 'lawyer':
+        case 'consultant':
+          return "bg-[#F8FAFC]";
+      }
+    }
+    
+    // Fall back to template choice background for general/other professions
+    switch (templateChoice) {
+      case 'Corporate_Glacier':
+        return "bg-slate-100";
+      case 'Corporate':
+        return "bg-white";
+      case 'Minimalist':
+        return "bg-gray-50";
+      default:
+        return "bg-[#050505]";
+    }
+  };
+
+  const renderTemplate = () => {
+    if (!profileData) return null;
+
+    // If they explicitly selected a standard layout, render it regardless of profession
+    const isStandardLayoutChoice = [
+      'Standard', 'Corporate_Glacier', 'Corporate', 'Minimalist', 'standard_classic'
+    ].includes(profileData.template_choice);
+
+    if (isStandardLayoutChoice) {
+      switch (profileData.template_choice) {
+        case 'Corporate_Glacier':
+          return <CorporateGlacierTemplate siteData={siteData} activeTheme={activeTheme} />;
+        case 'Corporate':
+          return <CorporateTemplate siteData={siteData} activeTheme={activeTheme} />;
+        case 'Minimalist':
+          return <MinimalistTemplate siteData={siteData} activeTheme={activeTheme} />;
+        case 'Standard':
+        case 'standard_classic':
+        default:
+          return <StandardTemplate siteData={siteData} activeTheme={activeTheme} />;
+      }
+    }
+
+    // Otherwise, render the specialized layout based on their profession (default for specialized_v1)
+    switch (profileData.profession) {
+      case 'engineer':
+      case 'architect':
+      case 'data_scientist':
+        return <DevPreciseTemplate data={profileData as any} />;
+      case 'teacher':
+      case 'scholar':
+        return <AcademicCleanTemplate data={profileData as any} />;
+      case 'actor':
+        return <CinemaDramaticTemplate data={profileData as any} />;
+      case 'influencer':
+      case 'player':
+      case 'coach':
+      case 'scout':
+        return <VibrantSocialTemplate data={profileData as any} />;
+      case 'editor':
+      case 'artist':
+        return <EditorialRichTemplate data={profileData as any} />;
+      case 'manager':
+      case 'executive':
+      case 'coordinator':
+        return <DataForwardTemplate data={profileData as any} />;
+      case 'student':
+        return <ModularJourneyTemplate data={profileData as any} />;
+      case 'doctor':
+      case 'lawyer':
+      case 'consultant':
+        return <ExpertTrustTemplate data={profileData as any} />;
+      default:
+        return <StandardTemplate siteData={siteData} activeTheme={activeTheme} />;
+    }
+  };
+
+  const portfolioContent = renderTemplate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black p-6">
@@ -139,11 +258,11 @@ export default function PortfolioPreview({ portfolio, projects = [] }: Portfolio
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4 }}
-              className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-700"
+              className={`rounded-xl shadow-2xl overflow-hidden border border-gray-700 transition-colors duration-300 ${getTemplateBg(profileData?.profession, profileData?.template_choice)}`}
               style={{ aspectRatio: "16/10" }}
             >
               <div className="w-full h-full overflow-auto">
-                <div className="bg-white dark:bg-[#0a0a0a]">
+                <div className={`transition-colors duration-300 min-h-full ${getTemplateBg(profileData?.profession, profileData?.template_choice)}`}>
                   {portfolioContent}
                 </div>
               </div>
@@ -158,23 +277,36 @@ export default function PortfolioPreview({ portfolio, projects = [] }: Portfolio
               transition={{ duration: 0.4 }}
               className="flex justify-center items-start py-8"
             >
-              <div className="relative mx-auto" style={{ width: "390px" }}>
+              {/* High-Fidelity Phone Frame Container */}
+              <div 
+                className="relative mx-auto bg-[#18181b] rounded-[52px] p-3.5 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85)] border border-zinc-800 ring-1 ring-white/10"
+                style={{ width: "380px", height: "820px" }}
+              >
+                {/* Inner Bezel Border */}
+                <div className="absolute inset-2.5 border-[2px] border-zinc-800/80 rounded-[42px] pointer-events-none z-20"></div>
+
+                {/* Left Hardware Buttons */}
+                <div className="w-[3px] h-6 bg-zinc-850 absolute -left-[2px] top-28 rounded-l border-y border-zinc-700/30"></div>
+                <div className="w-[3px] h-12 bg-zinc-850 absolute -left-[2px] top-40 rounded-l border-y border-zinc-700/30"></div>
+                <div className="w-[3px] h-12 bg-zinc-850 absolute -left-[2px] top-56 rounded-l border-y border-zinc-700/30"></div>
+
+                {/* Right Power Button */}
+                <div className="w-[3px] h-16 bg-zinc-850 absolute -right-[2px] top-44 rounded-r border-y border-zinc-700/30"></div>
+
+                {/* Dynamic Island Pill */}
+                <div className="absolute top-5 left-1/2 transform -translate-x-1/2 z-30 w-28 h-6 bg-black rounded-full pointer-events-none flex items-center justify-between px-3.5 shadow-inner">
+                  {/* Camera lens glow */}
+                  <div className="w-2 h-2 rounded-full bg-zinc-950 border border-zinc-900/80 flex items-center justify-center">
+                    <div className="w-1 h-1 rounded-full bg-blue-900/30"></div>
+                  </div>
+                  {/* Sensor dot */}
+                  <div className="w-1.5 h-1.5 rounded-full bg-zinc-950"></div>
+                </div>
+
                 <div 
-                  className="absolute inset-0 bg-black rounded-[40px] z-20"
-                  style={{
-                    border: "12px solid #1a1a1a",
-                  }}
-                />
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30 w-40 h-8 bg-black rounded-b-3xl" />
-                <div 
-                  className="relative z-10 bg-white dark:bg-[#0a0a0a] overflow-hidden rounded-[36px]"
-                  style={{ 
-                    width: "366px", 
-                    height: "812px",
-                    margin: "12px"
-                  }}
+                  className={`relative z-10 overflow-hidden rounded-[38px] w-full h-full ring-1 ring-black/40 transition-colors duration-300 ${getTemplateBg(profileData?.profession, profileData?.template_choice)}`}
                 >
-                  <div className="w-full h-full overflow-y-auto overflow-x-hidden bg-white dark:bg-[#0a0a0a]">
+                  <div className={`w-full h-full overflow-y-auto overflow-x-hidden transition-colors duration-300 ${getTemplateBg(profileData?.profession, profileData?.template_choice)}`}>
                     <div className="w-full">
                       {portfolioContent}
                     </div>

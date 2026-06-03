@@ -1,7 +1,10 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { Play, Clapperboard, Star, Camera, User, Mail, Globe } from "lucide-react";
+import { Play, Clapperboard, Star, Camera, User, Mail, Globe, Film } from "lucide-react";
+import { Syne } from "next/font/google";
+
+const syne = Syne({ subsets: ["latin"] });
 
 const InstagramSVG = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -26,7 +29,6 @@ interface PortfolioData {
 export default function CinemaDramaticTemplate({ data }: { data: PortfolioData }) {
   const { specialized_data } = data;
 
-  // Helper to extract YouTube ID or use a placeholder
   const getEmbedUrl = (url?: string) => {
     if (!url) return null;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -40,154 +42,148 @@ export default function CinemaDramaticTemplate({ data }: { data: PortfolioData }
   const embedUrl = getEmbedUrl(specialized_data?.demo_url);
 
   return (
-    <div className="min-h-screen bg-black text-stone-200 font-sans selection:bg-stone-700 selection:text-white">
+    <div className={`${syne.className} min-h-screen bg-black text-stone-200 selection:bg-amber-500 selection:text-black relative overflow-x-hidden`}>
+      
       {/* Immersive Video Hero */}
-      <section className="relative h-screen w-full overflow-hidden">
+      <section className="relative h-[90vh] w-full overflow-hidden flex flex-col justify-end">
         {embedUrl ? (
           <div className="absolute inset-0 z-0">
             <iframe 
               src={embedUrl}
-              className="w-full h-full scale-[1.5] opacity-40 pointer-events-none"
+              className="w-full h-full scale-[1.5] opacity-30 pointer-events-none"
               frameBorder="0"
               allow="autoplay; encrypted-media"
             />
           </div>
         ) : (
-          <div className="absolute inset-0 bg-stone-900 opacity-50 z-0" />
+          <div className="absolute inset-0 bg-stone-950 opacity-40 z-0" />
         )}
         
+        {/* Spotlight Vignette Gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/5 via-transparent to-transparent pointer-events-none z-10" />
 
-        <div className="relative z-20 h-full flex flex-col justify-end px-8 pb-24 max-w-7xl mx-auto">
+        <div className="relative z-20 w-full px-6 md:px-12 pb-16 max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <div className="flex items-center gap-4 text-stone-400 font-black uppercase tracking-[0.3em] text-xs">
-              <Clapperboard size={16} />
-              Featured_Performer
+            <div className="flex items-center gap-3 text-amber-500 font-bold uppercase tracking-[0.4em] text-xs">
+              <Film size={16} className="animate-pulse" />
+              <span>Spotlight Featured Performer</span>
             </div>
-            <h1 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8] text-white">
+            
+            <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-white">
               {data.full_name}
             </h1>
-            <div className="flex flex-wrap gap-6 items-center pt-8">
-              <div className="px-6 py-3 border border-white/20 bg-white/10 backdrop-blur-md rounded-full flex items-center gap-3 text-sm font-bold uppercase tracking-widest">
-                <Star className="text-yellow-500" size={16} />
-                {specialized_data?.agency || "Independent Artist"}
+            
+            <div className="flex flex-wrap gap-4 items-center pt-4">
+              <div className="px-6 py-2.5 border border-white/10 bg-white/5 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-widest text-stone-300">
+                ★ {specialized_data?.agency || "Independent Performer"}
               </div>
-              <button className="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform">
-                <Play size={24} fill="black" />
-              </button>
             </div>
           </motion.div>
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-8 py-32">
-        {/* Credits / Roles */}
-        <section className="grid grid-cols-1 md:grid-cols-12 gap-24 mb-40">
-          <div className="md:col-span-4">
-            <h2 className="text-xs font-black uppercase tracking-[0.4em] text-stone-500 mb-8 border-l-2 border-stone-800 pl-4">
-              Selected_Works
-            </h2>
-            <div className="space-y-12">
-              {specialized_data?.roles?.split(',').map((role, i) => (
-                <motion.div 
-                  key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="group"
-                >
-                  <span className="text-stone-600 font-mono text-[10px] mb-2 block tracking-widest">PROJ_0{i+1}</span>
-                  <h3 className="text-2xl font-bold uppercase group-hover:text-white transition-colors">{role.trim()}</h3>
-                  <div className="h-px w-0 group-hover:w-full bg-stone-500 transition-all duration-500 mt-2" />
-                </motion.div>
-              )) || (
-                <p className="text-stone-600 font-mono text-xs italic">Update your notable roles in the dashboard.</p>
-              )}
-            </div>
+      {/* Main Theatrical Section */}
+      <main className="max-w-6xl mx-auto px-6 md:px-12 py-24 space-y-32">
+        
+        {/* Credit Reels / Notable Roles */}
+        <section className="grid grid-cols-1 md:grid-cols-12 gap-16 border-t border-stone-900 pt-16">
+          <div className="md:col-span-4 space-y-4">
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500">Selected Credits</span>
+            <h2 className="text-3xl font-black uppercase text-white tracking-tight leading-none">Notable<br />Repertoire</h2>
           </div>
-
-          <div className="md:col-span-8">
-            <div className="space-y-12">
-              <div className="flex items-center gap-4 text-stone-500">
-                <User size={20} />
-                <h2 className="text-xl font-bold uppercase tracking-tight">The Profile</h2>
-              </div>
-              <p className="text-4xl font-light leading-snug text-stone-300 italic">
-                {data.bio}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Cinematic Grid */}
-        <section className="mb-40">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2 h-[600px] bg-stone-900 rounded-2xl overflow-hidden relative group">
-               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop')] bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-               <div className="absolute bottom-8 left-8">
-                 <span className="text-[10px] font-black uppercase tracking-widest text-white/50 block mb-2">Scene_01</span>
-                 <h4 className="text-2xl font-bold uppercase text-white">Dramatic Monologue</h4>
-               </div>
-            </div>
-            <div className="h-[600px] bg-stone-900 rounded-2xl overflow-hidden relative group">
-               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1492691523567-697424396261?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-               <div className="absolute bottom-8 left-8">
-                 <span className="text-[10px] font-black uppercase tracking-widest text-white/50 block mb-2">Still_02</span>
-                 <h4 className="text-2xl font-bold uppercase text-white">Portrait Study</h4>
-               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Footer / Contact Hub */}
-        <footer id="contact" className="border-t border-stone-900 pt-24 pb-12 flex flex-col items-center">
-          <h2 className="text-4xl md:text-6xl font-black mb-12 tracking-tighter uppercase text-white">Direct_Outreach</h2>
           
-          <div className="flex flex-wrap justify-center gap-8 mb-20">
+          <div className="md:col-span-8 space-y-12">
+            {specialized_data?.roles?.split(',').map((role, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="group border-b border-stone-900 pb-6 flex justify-between items-baseline"
+              >
+                <div className="space-y-1">
+                  <span className="text-stone-700 font-mono text-[9px] block tracking-widest">ACT_0{i+1}</span>
+                  <h3 className="text-xl md:text-2xl font-bold uppercase text-white group-hover:text-amber-500 transition-colors">{role.trim()}</h3>
+                </div>
+                <div className="w-8 h-px bg-stone-850 group-hover:w-16 bg-amber-500 transition-all duration-300"></div>
+              </motion.div>
+            )) || (
+              <p className="text-stone-500 font-mono text-xs italic">Update notable credentials in editor.</p>
+            )}
+          </div>
+        </section>
+
+        {/* Biography Block */}
+        <section className="grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
+          <div className="md:col-span-12">
+            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500 mb-6">Manifesto & Mission</div>
+            <p className="text-2xl md:text-4xl font-light leading-snug text-stone-300 italic max-w-4xl">
+              &quot;{data.bio}&quot;
+            </p>
+          </div>
+        </section>
+
+        {/* Cinematic Media Showcase */}
+        <section className="space-y-6">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500">Theatrical Capture</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 h-[250px] sm:h-[450px] bg-stone-900 rounded-xl overflow-hidden relative group border border-stone-900">
+               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop')] bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+               <div className="absolute bottom-6 left-6">
+                 <span className="text-[9px] font-mono uppercase tracking-widest text-amber-500 block mb-1">STILL_01</span>
+                 <h4 className="text-xl font-bold uppercase text-white">Dramatic Monologue</h4>
+               </div>
+            </div>
+            <div className="h-[250px] sm:h-[450px] bg-stone-900 rounded-xl overflow-hidden relative group border border-stone-900">
+               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1492691523567-697424396261?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+               <div className="absolute bottom-6 left-6">
+                 <span className="text-[9px] font-mono uppercase tracking-widest text-amber-500 block mb-1">STILL_02</span>
+                 <h4 className="text-xl font-bold uppercase text-white">Character Study</h4>
+               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Outreach / Footer */}
+        <footer id="contact" className="border-t border-stone-900 pt-24 pb-12 text-center space-y-16">
+          <div className="space-y-4">
+            <h2 className="text-4xl md:text-6xl font-black uppercase text-white tracking-tighter">Direct_Booking</h2>
+            <p className="text-sm text-stone-500 uppercase tracking-widest">Connect for bookings, auditions, or representation invites.</p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-6">
             {data.social_links?.email && (
-              <a href={`mailto:${data.social_links.email}`} className="w-16 h-16 rounded-full border border-stone-700 flex items-center justify-center hover:bg-white hover:text-black transition-all group shadow-xl shadow-white/5">
-                <Mail size={24} />
+              <a href={`mailto:${data.social_links.email}`} className="w-14 h-14 rounded-full border border-stone-800 flex items-center justify-center text-stone-400 hover:bg-amber-500 hover:text-black hover:border-amber-500 transition-all shadow-xl">
+                <Mail size={20} />
               </a>
             )}
             {data.social_links?.instagram && (
-              <a href={data.social_links.instagram} target="_blank" rel="noreferrer" className="w-16 h-16 rounded-full border border-stone-700 flex items-center justify-center hover:bg-white hover:text-black transition-all group shadow-xl shadow-white/5">
-                <InstagramSVG size={24} />
-              </a>
-            )}
-            {data.social_links?.linkedin && (
-              <a href={data.social_links.linkedin} target="_blank" rel="noreferrer" className="w-16 h-16 rounded-full border border-stone-700 flex items-center justify-center hover:bg-white hover:text-black transition-all group shadow-xl shadow-white/5">
-                <div className="font-black text-xs">IN</div>
-              </a>
-            )}
-            {data.social_links?.youtube && (
-              <a href={data.social_links.youtube} target="_blank" rel="noreferrer" className="w-16 h-16 rounded-full border border-stone-700 flex items-center justify-center hover:bg-white hover:text-black transition-all group shadow-xl shadow-white/5">
-                <Play size={24} />
+              <a href={data.social_links.instagram} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-full border border-stone-800 flex items-center justify-center text-stone-400 hover:bg-amber-500 hover:text-black hover:border-amber-500 transition-all shadow-xl">
+                <InstagramSVG size={20} />
               </a>
             )}
             {data.social_links?.custom_url && (
-              <a href={data.social_links.custom_url} target="_blank" rel="noreferrer" className="w-16 h-16 rounded-full border border-stone-700 flex items-center justify-center hover:bg-white hover:text-black transition-all group shadow-xl shadow-white/5">
-                <Globe size={24} />
+              <a href={data.social_links.custom_url} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-full border border-stone-800 flex items-center justify-center text-stone-400 hover:bg-amber-500 hover:text-black hover:border-amber-500 transition-all shadow-xl">
+                <Globe size={20} />
               </a>
             )}
           </div>
 
-          <div className="w-full flex flex-col md:flex-row justify-between items-center gap-12 pt-12 border-t border-stone-950">
-            <div className="text-[10px] font-black text-stone-700 uppercase tracking-widest">
-              © {new Date().getFullYear()} {data.full_name} // CINEMA_ARCHIVE
-            </div>
-            <div className="text-center md:text-right">
-              <span className="text-[10px] font-black text-stone-700 uppercase tracking-widest block mb-2">Representation</span>
-              <p className="text-sm font-bold uppercase text-stone-500">{specialized_data?.agency || "Seeking Representation"}</p>
-            </div>
+          <div className="w-full flex flex-col sm:flex-row justify-between items-center text-[10px] text-stone-700 uppercase tracking-widest gap-4 border-t border-stone-950 pt-8">
+            <div>© {new Date().getFullYear()} {data.full_name} {"//"} Performance Archive</div>
+            <div>Status: Available</div>
           </div>
         </footer>
+
       </main>
+
     </div>
   );
 }

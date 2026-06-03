@@ -21,7 +21,9 @@ export default function ResumeAnalyzer({ onAnalysisComplete }: ResumeAnalyzerPro
 
   useEffect(() => {
     const savedKey = localStorage.getItem("gemini_api_key");
-    if (savedKey) setApiKey(savedKey);
+    if (savedKey) {
+      setTimeout(() => setApiKey(savedKey), 0);
+    }
   }, []);
 
   const steps = [

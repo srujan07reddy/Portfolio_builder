@@ -2,6 +2,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { GraduationCap, Rocket, Lightbulb, BookOpen, Mail, Link as LinkIcon, Compass, Globe } from "lucide-react";
+import { DM_Sans } from "next/font/google";
+
+const dmSans = DM_Sans({ subsets: ["latin"] });
 
 interface PortfolioData {
   full_name: string;
@@ -18,142 +21,106 @@ export default function ModularJourneyTemplate({ data }: { data: PortfolioData }
   const { specialized_data } = data;
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-cyan-100 selection:text-cyan-700">
-      <header className="px-8 py-10 flex justify-between items-center max-w-6xl mx-auto">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-cyan-500 rounded-2xl rotate-3 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
-            <Compass size={20} />
+    <div className={`${dmSans.className} min-h-screen bg-[#F8FAFC] text-[#0F172A] selection:bg-cyan-100 selection:text-cyan-700 relative p-6 md:p-12 overflow-x-hidden flex items-center justify-center`}>
+      
+      {/* Dynamic Background dots */}
+      <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-40 z-0"></div>
+
+      <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-12 gap-6 relative z-10">
+        
+        {/* TIMELINE HEADER */}
+        <div className="md:col-span-12 flex justify-between items-center bg-white border border-slate-200/80 p-6 rounded-3xl shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-cyan-500 rounded-2xl rotate-3 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
+              <Compass size={20} />
+            </div>
+            <span className="font-black text-xl tracking-tight">Student_<span className="text-cyan-500">Path</span></span>
           </div>
-          <span className="font-black text-xl tracking-tight">Student_<span className="text-cyan-500">Path</span></span>
+          <div className="text-[10px] font-black uppercase text-cyan-600 bg-cyan-50 border border-cyan-100 px-3 py-1 rounded-full">
+            Class of {specialized_data?.grad_year || "2026"}
+          </div>
         </div>
-        <div className="flex gap-4">
-          <a href="#contact" className="px-6 py-2 bg-slate-100 hover:bg-cyan-500 hover:text-white transition-all rounded-xl text-sm font-bold">
-            Let's Talk
-          </a>
+
+        {/* TIMELINE HERO CARD */}
+        <div className="md:col-span-12 bg-white border border-slate-200/80 p-8 md:p-12 rounded-[2.5rem] shadow-sm space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-50 border border-cyan-100 rounded-full text-cyan-600 font-black text-[10px] uppercase tracking-widest">
+            <Rocket size={12} /> Education Path
+          </div>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-tight">
+            Building the <span className="text-cyan-500 underline decoration-4 underline-offset-4 decoration-cyan-100">future</span>, one semester at a time.
+          </h1>
+          <p className="text-slate-500 text-sm md:text-base leading-relaxed max-w-2xl">
+            {data.bio}
+          </p>
         </div>
-      </header>
 
-      <main className="max-w-6xl mx-auto px-8 py-20">
-        {/* Hero Section */}
-        <section className="mb-32 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          <div className="lg:col-span-7">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-50 border border-cyan-100 rounded-full text-cyan-600 font-black text-[10px] uppercase tracking-widest mb-8"
-            >
-              <Rocket size={12} /> Class_of_{specialized_data?.grad_year || "2026"}
-            </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-6xl md:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-12"
-            >
-              Building the <span className="text-cyan-500 underline decoration-8 underline-offset-8 decoration-cyan-100">future</span>, one project at a time.
-            </motion.h1>
-
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl text-slate-500 leading-relaxed max-w-xl"
-            >
-              {data.bio}
-            </motion.p>
+        {/* TIMELINE GRID / JOURNEY STEPS */}
+        <div className="md:col-span-12 space-y-6">
+          <div className="flex items-center gap-4">
+            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">Path Semesters</h3>
+            <div className="h-px flex-1 bg-slate-200"></div>
           </div>
 
-          <div className="lg:col-span-5 grid grid-cols-1 gap-6">
-             <div className="p-8 bg-slate-50 rounded-[2.5rem] border-2 border-slate-100 relative overflow-hidden group">
-                <GraduationCap className="absolute -right-4 -bottom-4 text-slate-200 group-hover:text-cyan-100 transition-colors" size={160} />
-                <div className="relative z-10">
-                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Institution</div>
-                   <div className="text-2xl font-black text-slate-900">{specialized_data?.school || "University of Future"}</div>
-                   <div className="mt-4 inline-block px-3 py-1 bg-white rounded-lg text-xs font-bold shadow-sm">
-                      {specialized_data?.grad_year || "Pending"} Graduation
-                   </div>
+          <div className="relative border-l-2 border-cyan-100 pl-6 ml-4 space-y-8 py-2">
+            {[
+              { year: "Semester 04", title: "Distributed Lab Projects", desc: "Implementing fault-tolerant cluster runtimes and REST API modules.", inst: specialized_data?.school || "University of Future" },
+              { year: "Semester 03", title: "Full-Stack Development Focus", desc: "Building database schemas and responsive UI dashboards.", inst: specialized_data?.school || "University of Future" },
+              { year: "Semester 02", title: "Algorithms & Paradigms", desc: "Focusing on data structures, sorting efficiency, and systems logic.", inst: specialized_data?.school || "University of Future" }
+            ].map((step, idx) => (
+              <div key={idx} className="relative group">
+                {/* Timeline node */}
+                <div className="absolute -left-10 top-1 w-8 h-8 rounded-full border-4 border-[#F8FAFC] bg-cyan-500 flex items-center justify-center text-white text-[10px] font-black group-hover:scale-110 transition-transform">
+                  {3 - idx}
                 </div>
-             </div>
-             <div className="p-8 bg-cyan-500 rounded-[2.5rem] text-white shadow-2xl shadow-cyan-500/20">
-                <Lightbulb size={32} className="mb-6" />
-                <div className="text-xl font-bold leading-tight">Currently exploring Distributed Systems and UI/UX Design.</div>
-             </div>
+                
+                <div className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:border-cyan-200 transition-all">
+                  <div className="flex justify-between items-baseline gap-4 mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-cyan-600">{step.year}</span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase">{step.inst}</span>
+                  </div>
+                  <h4 className="text-lg font-black text-slate-900 mb-1">{step.title}</h4>
+                  <p className="text-slate-500 text-xs leading-relaxed">{step.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
 
-        {/* Modules Grid */}
-        <section className="mb-40">
-           <div className="flex items-center gap-4 mb-16">
-             <h2 className="text-sm font-black text-slate-300 uppercase tracking-[0.4em]">Learning_Modules</h2>
-             <div className="h-px flex-1 bg-slate-100"></div>
-           </div>
+        {/* TIMELINE ROW 3: Outreach CTA / Social Footer */}
+        <div className="md:col-span-12 bg-slate-900 text-white p-8 rounded-[2.5rem] relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/20 blur-[90px]"></div>
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl font-black tracking-tight uppercase">Let&apos;s build projects.</h2>
+              <p className="text-xs text-slate-400 leading-relaxed mt-2">Always looking to collaborate on student projects, research, or open source.</p>
+            </div>
+            
+            <div className="flex flex-col gap-3">
+              {data.social_links?.email && (
+                <a href={`mailto:${data.social_links.email}`} className="p-4 bg-cyan-500 text-white rounded-xl hover:bg-cyan-600 transition-all text-center font-bold uppercase tracking-widest text-[10px] flex items-center justify-between px-6">
+                  Send Mail Intake <Mail size={14} />
+                </a>
+              )}
+              {data.social_links?.github && (
+                <a href={data.social_links.github} target="_blank" rel="noreferrer" className="p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all text-center font-bold uppercase tracking-widest text-[10px] text-slate-300 flex items-center justify-between px-6">
+                  GitHub Profile <LinkIcon size={14} />
+                </a>
+              )}
+              {data.social_links?.custom_url && (
+                <a href={data.social_links.custom_url} target="_blank" rel="noreferrer" className="p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all text-center font-bold uppercase tracking-widest text-[10px] text-slate-300 flex items-center justify-between px-6">
+                  {data.social_links.custom_label || "Other Project"} <Globe size={14} />
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-             {[
-               { title: "Core Fundamentals", icon: BookOpen, color: "bg-orange-100 text-orange-600" },
-               { title: "Project Labs", icon: Rocket, color: "bg-blue-100 text-blue-600" },
-               { title: "Open Source", icon: LinkIcon, color: "bg-emerald-100 text-emerald-600" }
-             ].map(item => (
-               <div key={item.title} className="p-10 border-2 border-slate-50 rounded-[3rem] hover:border-cyan-100 transition-all group">
-                 <div className={`w-14 h-14 ${item.color} rounded-2xl mb-8 flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                    <item.icon size={24} />
-                 </div>
-                 <h4 className="text-2xl font-black mb-4 tracking-tight">{item.title}</h4>
-                 <p className="text-slate-500 text-sm leading-relaxed mb-8">
-                    Implementing theory into practice through collaborative building and peer review sessions.
-                 </p>
-                 <div className="flex items-center gap-2 text-xs font-black uppercase text-cyan-500">
-                    View Docs <ArrowRight size={14} className="ml-2" />
-                 </div>
-               </div>
-             ))}
-           </div>
-        </section>
+        {/* Footer Metrics */}
+        <div className="md:col-span-12 text-center text-[9px] font-black text-slate-450 uppercase tracking-[0.4em] pt-4">
+          © {new Date().getFullYear()} Student Path // {data.full_name}
+        </div>
 
-        {/* Footer / Contact Hub */}
-        <footer id="contact" className="py-24 bg-slate-900 rounded-[3rem] text-white p-12 overflow-hidden relative">
-           <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/20 blur-[100px]"></div>
-           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-              <div>
-                 <h2 className="text-5xl font-black tracking-tighter mb-6 uppercase">LET'S <br /> <span className="text-cyan-400">BUILD.</span></h2>
-                 <p className="text-slate-400 font-medium mb-10 max-w-xs">Excited to collaborate on student projects, research, or innovative ideas.</p>
-              </div>
-              <div className="flex flex-col gap-4">
-                 {data.social_links?.email && (
-                   <a href={`mailto:${data.social_links.email}`} className="px-8 py-5 bg-cyan-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-cyan-600 transition-all shadow-xl shadow-cyan-500/20 flex items-center justify-between">
-                     Send Message <Mail size={16} />
-                   </a>
-                 )}
-                 {data.social_links?.github && (
-                   <a href={data.social_links.github} target="_blank" rel="noreferrer" className="px-8 py-5 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-between">
-                     Check GitHub <LinkIcon size={16} />
-                   </a>
-                 )}
-                 {data.social_links?.linkedin && (
-                   <a href={data.social_links.linkedin} target="_blank" rel="noreferrer" className="px-8 py-5 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-between">
-                     LinkedIn <LinkIcon size={16} />
-                   </a>
-                 )}
-                 {data.social_links?.custom_url && (
-                   <a href={data.social_links.custom_url} target="_blank" rel="noreferrer" className="px-8 py-5 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-between">
-                     {data.social_links.custom_label || "Other Project"} <Globe size={16} />
-                   </a>
-                 )}
-              </div>
-           </div>
-           <div className="mt-20 pt-8 border-t border-white/5 flex justify-between items-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
-              <span>© {new Date().getFullYear()} Student Path // {data.full_name}</span>
-              <span>Class of {specialized_data?.grad_year || "2026"}</span>
-           </div>
-        </footer>
-      </main>
+      </div>
     </div>
   );
 }
-
-const ArrowRight = ({ className, size }: { className?: string, size?: number }) => (
-  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14M12 5l7 7-7 7"/>
-  </svg>
-);

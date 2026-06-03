@@ -1,7 +1,10 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { BookOpen, GraduationCap, Award, Mail, ChevronRight, Quote } from "lucide-react";
+import { BookOpen, GraduationCap, Award, Mail, ChevronRight, Quote, Book } from "lucide-react";
+import { Lora } from "next/font/google";
+
+const lora = Lora({ subsets: ["latin"] });
 
 interface PortfolioData {
   full_name: string;
@@ -18,140 +21,132 @@ interface PortfolioData {
 export default function AcademicCleanTemplate({ data }: { data: PortfolioData }) {
   const { specialized_data } = data;
 
+  // Split bio into first character (for drop cap) and the rest
+  const bioText = data.bio || "Professional biography here...";
+  const firstLetter = bioText.charAt(0);
+  const remainingBio = bioText.slice(1);
+
   return (
-    <div className="min-h-screen bg-[#fcfcf9] text-slate-800 font-serif selection:bg-amber-100 selection:text-slate-900">
-      <header className="max-w-5xl mx-auto px-8 py-12 flex justify-between items-baseline border-b border-slate-200">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{data.full_name}</h1>
-        <nav className="flex gap-8 text-sm font-medium uppercase tracking-widest font-sans text-slate-500">
-          <a href="#about" className="hover:text-slate-900 transition-colors">Philosophy</a>
-          <a href="#specialty" className="hover:text-slate-900 transition-colors">Curriculum</a>
-          <a href="#contact" className="hover:text-slate-900 transition-colors">Contact</a>
-        </nav>
-      </header>
+    <div className={`${lora.className} min-h-screen bg-[#FAF9F6] text-[#1E293B] selection:bg-[#E2E8F0] selection:text-slate-900 p-8 md:p-16 flex flex-col justify-between`}>
+      <div className="max-w-4xl mx-auto w-full">
+        
+        {/* Editorial Journal Header */}
+        <header className="border-b-2 border-double border-slate-300 py-6 text-center space-y-2">
+          <div className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 font-sans">
+            Curriculum Vitæ & Documentation
+          </div>
+          <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-none italic">
+            {data.full_name}
+          </h1>
+          <div className="text-[11px] font-sans font-bold uppercase tracking-wider text-slate-500 pt-2 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+            <span>{specialized_data?.university || "Independent Scholar"}</span>
+            <span className="hidden sm:inline w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+            <span>{specialized_data?.subject || "General Pedagogy"}</span>
+          </div>
+        </header>
 
-      <main className="max-w-5xl mx-auto px-8 py-24">
-        {/* Hero Section */}
-        <section className="mb-40 max-w-3xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 text-amber-600 font-sans font-bold uppercase tracking-widest text-xs mb-6"
-          >
-            <GraduationCap size={16} />
-            Academic Portfolio // {specialized_data?.subject || "Educator"}
-          </motion.div>
+        {/* Main Document Body */}
+        <main className="py-16 space-y-20">
           
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold text-slate-900 leading-[1.1] mb-12 italic"
-          >
-            Empowering through <span className="text-amber-700">knowledge</span> and mentorship.
-          </motion.h2>
-
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-wrap gap-12 pt-12 border-t border-slate-100 font-sans"
-          >
-            <div>
-              <span className="text-[10px] text-slate-400 font-black uppercase block mb-1">Institution</span>
-              <span className="text-sm font-bold">{specialized_data?.university || "Independent Educator"}</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-slate-400 font-black uppercase block mb-1">Subject_Mastery</span>
-              <span className="text-sm font-bold">{specialized_data?.subject || "Curriculum Design"}</span>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* Philosophy Block */}
-        <section id="about" className="mb-40 grid grid-cols-1 md:grid-cols-12 gap-12">
-          <div className="md:col-span-4">
-            <h3 className="text-sm font-black text-slate-300 uppercase tracking-[0.3em] sticky top-32">
-              Teaching_Philosophy
-            </h3>
-          </div>
-          <div className="md:col-span-8 relative">
-            <Quote className="absolute -left-12 -top-6 text-amber-100" size={80} />
-            <div className="relative z-10">
-              <p className="text-2xl text-slate-700 leading-relaxed font-medium italic mb-8">
-                "{specialized_data?.philosophy || "Education is not the filling of a pail, but the lighting of a fire."}"
-              </p>
-              <p className="text-slate-500 font-sans leading-loose text-lg">
-                {data.bio}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Curriculum / Skills */}
-        <section id="specialty" className="mb-40">
-          <div className="flex items-center gap-6 mb-16">
-            <h3 className="text-2xl font-bold text-slate-900">Curriculum & Areas of Expertise</h3>
-            <div className="h-px flex-1 bg-slate-100"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-100 border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-            {[
-              { title: "Curriculum Development", desc: "Designing comprehensive learning paths for diverse age groups." },
-              { title: "Differentiated Instruction", desc: "Adapting methods to meet individual student needs and learning styles." },
-              { title: "Educational Technology", desc: "Integrating modern digital tools to enhance classroom engagement." },
-              { title: "Student Assessment", desc: "Implementing formative and summative evaluations to track growth." }
-            ].map((item) => (
-              <div key={item.title} className="bg-white p-10 hover:bg-slate-50 transition-colors group">
-                <BookOpen className="text-amber-600 mb-6 group-hover:scale-110 transition-transform" size={24} />
-                <h4 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h4>
-                <p className="text-slate-500 font-sans text-sm leading-relaxed">{item.desc}</p>
+          {/* Philosophical Opening / Drop Cap Bio */}
+          <section className="grid grid-cols-1 md:grid-cols-12 gap-12 items-baseline">
+            <div className="md:col-span-4 border-r-0 md:border-r border-slate-200 pr-0 md:pr-8 py-2">
+              <span className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Subject Mastery</span>
+              <div className="text-xl font-bold italic text-slate-900 leading-snug">
+                {specialized_data?.subject || "Curriculum Design & Educational Philosophy"}
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Call to Action / Contact */}
-        <section id="contact" className="py-24 bg-slate-900 rounded-[3rem] text-center px-8 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500 via-transparent to-transparent"></div>
-          <div className="relative z-10">
-            <h3 className="text-3xl md:text-5xl font-bold text-white mb-8">Ready to collaborate?</h3>
-            <p className="text-slate-400 font-sans mb-12 max-w-xl mx-auto">
-              I am always open to discussing new educational projects, curriculum opportunities, or guest lectures.
-            </p>
-            
-            <div className="flex flex-wrap justify-center gap-4 font-sans">
-              {data.social_links?.email && (
-                <a href={`mailto:${data.social_links.email}`} className="inline-flex items-center gap-3 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-xl shadow-amber-900/20">
-                  <Mail size={14} /> Send Email
-                </a>
-              )}
-              {data.social_links?.linkedin && (
-                <a href={data.social_links.linkedin} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-white/10">
-                  LinkedIn Profile
-                </a>
-              )}
-              {data.social_links?.twitter && (
-                <a href={data.social_links.twitter} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-white/10">
-                  Twitter / X
-                </a>
-              )}
-              {data.social_links?.custom_url && (
-                <a href={data.social_links.custom_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-black uppercase tracking-widest text-[10px] rounded-xl transition-all border border-white/10">
-                  {data.social_links.custom_label || "View More"}
-                </a>
-              )}
             </div>
-          </div>
-        </section>
-      </main>
+            
+            <div className="md:col-span-8 space-y-6">
+              <span className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-slate-400 block">Personal Manifesto</span>
+              <p className="text-lg md:text-xl leading-relaxed text-slate-800 text-justify">
+                <span className="float-left text-6xl md:text-7xl font-bold leading-[0.8] pr-3 pt-1 text-slate-900 font-serif">
+                  {firstLetter}
+                </span>
+                {remainingBio}
+              </p>
+            </div>
+          </section>
 
-      <footer className="max-w-5xl mx-auto px-8 py-12 border-t border-slate-200 text-[10px] font-sans font-bold uppercase tracking-widest text-slate-400 flex flex-col md:flex-row justify-between items-center gap-6">
-        <span>© {new Date().getFullYear()} {data.full_name} // Academic Portfolio</span>
+          {/* Academic Philosophy Quote */}
+          {specialized_data?.philosophy && (
+            <section className="bg-slate-100/50 border border-slate-200/60 rounded-xl p-8 md:p-12 text-center max-w-3xl mx-auto space-y-6">
+              <Quote className="mx-auto text-slate-300" size={32} />
+              <p className="text-xl md:text-2xl italic leading-relaxed text-slate-700 font-medium">
+                &quot;{specialized_data.philosophy}&quot;
+              </p>
+              <div className="h-0.5 w-16 bg-slate-300 mx-auto"></div>
+            </section>
+          )}
+
+          {/* Areas of Expertise / Syllabus */}
+          <section className="space-y-8">
+            <div className="flex items-center gap-4">
+              <h3 className="text-xs font-sans font-black uppercase tracking-[0.3em] text-slate-400">Curriculum & Research Areas</h3>
+              <div className="h-px flex-1 bg-slate-200"></div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {[
+                { title: "Curriculum Design", desc: "Crafting structured course timelines and digital resource matrices." },
+                { title: "Differentiated Instruction", desc: "Adapting lesson objectives to meet the specific requirements of cohorts." },
+                { title: "Educational Tech Systems", desc: "Integrating modern software tools directly into classroom teaching models." },
+                { title: "Formative Assessments", desc: "Implementing progressive diagnostic analytics to monitor student progression." }
+              ].map((item, i) => (
+                <div key={item.title} className="pb-6 border-b border-slate-200 space-y-2 group">
+                  <div className="flex items-center gap-4">
+                    <span className="font-sans font-bold text-xs text-slate-400">0{i+1}.</span>
+                    <h4 className="text-lg font-bold text-slate-900 group-hover:italic transition-all">{item.title}</h4>
+                  </div>
+                  <p className="text-sm text-slate-500 leading-relaxed pl-8">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Contact / Publications Links */}
+          <section className="border-t-2 border-double border-slate-300 pt-16 space-y-8">
+            <div className="text-center">
+              <h3 className="text-xs font-sans font-black uppercase tracking-[0.3em] text-slate-400 mb-6">Scholarly Connections</h3>
+              
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs font-sans font-bold uppercase tracking-wider">
+                {data.social_links?.email && (
+                  <a href={`mailto:${data.social_links.email}`} className="text-slate-600 hover:text-slate-900 border-b border-slate-300 pb-1 hover:border-slate-900 transition-all flex items-center gap-1.5">
+                    <Mail size={12} /> Email Consult
+                  </a>
+                )}
+                {data.social_links?.linkedin && (
+                  <a href={data.social_links.linkedin} target="_blank" rel="noreferrer" className="text-slate-600 hover:text-slate-900 border-b border-slate-300 pb-1 hover:border-slate-900 transition-all">
+                    Professional Network
+                  </a>
+                )}
+                {data.social_links?.custom_url && (
+                  <a href={data.social_links.custom_url} target="_blank" rel="noreferrer" className="text-slate-600 hover:text-slate-900 border-b border-slate-300 pb-1 hover:border-slate-900 transition-all flex items-center gap-1.5">
+                    <Book size={12} /> {data.social_links.custom_label || "Research Repository"}
+                  </a>
+                )}
+                {data.social_links?.twitter && (
+                  <a href={data.social_links.twitter} target="_blank" rel="noreferrer" className="text-slate-600 hover:text-slate-900 border-b border-slate-300 pb-1 hover:border-slate-900 transition-all">
+                    Twitter / X
+                  </a>
+                )}
+              </div>
+            </div>
+          </section>
+
+        </main>
+
+      </div>
+
+      {/* Editorial Footer */}
+      <footer className="max-w-4xl mx-auto w-full border-t border-slate-200 mt-20 pt-8 flex flex-col sm:flex-row justify-between items-center text-[10px] font-sans font-bold uppercase tracking-widest text-slate-400 gap-4">
+        <span>© {new Date().getFullYear()} {data.full_name}</span>
         <div className="flex gap-6">
-           {data.social_links?.github && <a href={data.social_links.github} target="_blank" rel="noreferrer" className="hover:text-slate-900 transition-colors">GitHub</a>}
-           {data.social_links?.email && <a href={`mailto:${data.social_links.email}`} className="hover:text-slate-900 transition-colors">Contact</a>}
+          <span>Documentation Index: verified</span>
+          <span>Archival Code: academic-v1</span>
         </div>
       </footer>
+
     </div>
   );
 }

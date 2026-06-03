@@ -1,7 +1,10 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Users, Heart, Share2, ExternalLink, Zap } from "lucide-react";
+import { TrendingUp, Users, Heart, Share2, Globe, Mail, Zap } from "lucide-react";
+import { Outfit } from "next/font/google";
+
+const outfit = Outfit({ subsets: ["latin"] });
 
 const YoutubeSVG = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -40,170 +43,141 @@ export default function VibrantSocialTemplate({ data }: { data: PortfolioData })
   const { specialized_data } = data;
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-rose-100 selection:text-rose-600">
-      {/* Dynamic Background Pattern */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-20">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] bg-[size:32px_32px]"></div>
-      </div>
+    <div className={`${outfit.className} min-h-screen bg-slate-50 text-slate-900 selection:bg-rose-100 selection:text-rose-600 relative p-6 md:p-12 overflow-x-hidden flex items-center justify-center`}>
+      {/* Playful Background Grid */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px)] bg-[size:24px_24px] pointer-events-none opacity-40 z-0"></div>
 
-      <nav className="relative z-50 px-8 py-6 flex justify-between items-center bg-white/80 backdrop-blur-xl border-b border-slate-100 sticky top-0">
-        <div className="text-2xl font-black italic tracking-tighter text-rose-500">
-          {data.username.toLowerCase()}.<span className="text-slate-900">live</span>
+      <div className="max-w-4xl w-full grid grid-cols-2 md:grid-cols-12 gap-6 relative z-10">
+        
+        {/* BENTO HEADER: Username / Logo Badge */}
+        <div className="col-span-2 md:col-span-12 flex justify-between items-center bg-white/70 backdrop-blur-md border border-slate-200/60 p-6 rounded-[2rem] shadow-sm">
+          <div className="text-xl font-black italic tracking-tighter text-rose-500">
+            {data.username.toLowerCase()}.<span className="text-slate-900">vibe</span>
+          </div>
+          <div className="px-4 py-1.5 bg-rose-50 border border-rose-100 rounded-full text-rose-600 font-bold text-xs uppercase tracking-widest flex items-center gap-1.5">
+            <Zap size={12} className="fill-rose-600 animate-bounce" /> Trending
+          </div>
         </div>
-        <div className="flex gap-4">
-          <button className="px-6 py-2 bg-slate-900 text-white font-bold rounded-full text-sm hover:bg-rose-600 transition-all">
-            Collab Now
-          </button>
-        </div>
-      </nav>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-8 py-20">
-        {/* Hero Section */}
-        <section className="mb-32 text-center">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-1 bg-rose-50 border border-rose-100 rounded-full text-rose-600 font-bold text-xs uppercase tracking-widest mb-8"
-          >
-            <Zap size={14} className="fill-rose-600" />
-            Trending_Now
-          </motion.div>
+        {/* BENTO 1: Name and Bio (Big widget) */}
+        <div className="col-span-2 md:col-span-8 bg-gradient-to-tr from-rose-500 to-orange-500 text-white p-8 md:p-12 rounded-[3rem] shadow-xl shadow-rose-500/10 flex flex-col justify-between min-h-[300px]">
+          <div className="text-sm font-bold uppercase tracking-widest opacity-80">Social Creator</div>
+          <div className="space-y-4 my-6">
+            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none">
+              {data.full_name}
+            </h1>
+            <p className="text-sm md:text-base leading-relaxed opacity-95">
+              {data.bio}
+            </p>
+          </div>
+          <div className="text-xs font-mono opacity-80">STATUS: Live on Feed</div>
+        </div>
+
+        {/* BENTO 2: Reach Stats Widget */}
+        <div className="col-span-1 md:col-span-4 bg-white border border-slate-200/60 p-8 rounded-[3rem] shadow-sm flex flex-col justify-between items-start">
+          <Users className="text-rose-500" size={32} />
+          <div>
+            <div className="text-4xl font-black text-slate-900 mb-1">{specialized_data?.total_reach || "150K+"}</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Total Reach</div>
+          </div>
+        </div>
+
+        {/* BENTO 3: Engagement Metrics */}
+        <div className="col-span-1 md:col-span-4 bg-[#0F172A] text-white p-8 rounded-[3rem] shadow-xl flex flex-col justify-between items-start">
+          <TrendingUp className="text-emerald-400" size={32} />
+          <div>
+            <div className="text-4xl font-black mb-1">{specialized_data?.engagement || "4.8%"}</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Engagement Index</div>
+          </div>
+        </div>
+
+        {/* BENTO 4: Social Links Platforms Grid */}
+        <div className="col-span-2 md:col-span-8 bg-white border border-slate-200/60 p-8 rounded-[3rem] shadow-sm flex flex-col justify-between gap-6">
+          <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Active Channels</div>
           
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-7xl md:text-9xl font-black text-slate-900 leading-[0.9] tracking-tight mb-12 uppercase"
-          >
-            {data.full_name}
-          </motion.h1>
+          <div className="grid grid-cols-3 gap-4 w-full">
+            {data.social_links?.youtube ? (
+              <a href={data.social_links.youtube} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 bg-red-50 hover:bg-red-100/50 rounded-2xl transition-all gap-2 text-red-600">
+                <YoutubeSVG size={28} />
+                <span className="text-xs font-bold">YouTube</span>
+              </a>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-4 bg-slate-50 opacity-40 rounded-2xl gap-2 text-slate-400">
+                <YoutubeSVG size={28} />
+                <span className="text-xs font-bold">YouTube</span>
+              </div>
+            )}
 
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="max-w-2xl mx-auto text-xl text-slate-500 font-medium leading-relaxed mb-16"
-          >
-            {data.bio}
-          </motion.p>
+            {data.social_links?.instagram ? (
+              <a href={data.social_links.instagram} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 bg-pink-50 hover:bg-pink-100/50 rounded-2xl transition-all gap-2 text-pink-600">
+                <InstagramSVG size={28} />
+                <span className="text-xs font-bold">Instagram</span>
+              </a>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-4 bg-slate-50 opacity-40 rounded-2xl gap-2 text-slate-400">
+                <InstagramSVG size={28} />
+                <span className="text-xs font-bold">Instagram</span>
+              </div>
+            )}
 
-          {/* Social Stats Widgets */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="p-8 bg-gradient-to-br from-rose-500 to-orange-500 rounded-[2.5rem] text-white shadow-2xl shadow-rose-500/20"
-            >
-              <Users className="mb-4" size={32} />
-              <div className="text-4xl font-black mb-1">{specialized_data?.total_reach || "100K+"}</div>
-              <div className="text-xs font-bold uppercase tracking-widest opacity-80">Total Reach</div>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl shadow-slate-900/20"
-            >
-              <TrendingUp className="mb-4 text-emerald-400" size={32} />
-              <div className="text-4xl font-black mb-1">{specialized_data?.engagement || "4.2%"}</div>
-              <div className="text-xs font-bold uppercase tracking-widest opacity-80">Avg. Engagement</div>
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] text-slate-900"
-            >
-              <Zap className="mb-4 text-rose-500" size={32} />
-              <div className="text-4xl font-black mb-1">Viral</div>
-              <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Content Status</div>
-            </motion.div>
+            {data.social_links?.twitter ? (
+              <a href={data.social_links.twitter} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 bg-sky-50 hover:bg-sky-100/50 rounded-2xl transition-all gap-2 text-sky-600">
+                <TwitterSVG size={28} />
+                <span className="text-xs font-bold">Twitter</span>
+              </a>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-4 bg-slate-50 opacity-40 rounded-2xl gap-2 text-slate-400">
+                <TwitterSVG size={28} />
+                <span className="text-xs font-bold">Twitter</span>
+              </div>
+            )}
           </div>
-        </section>
+        </div>
 
-        {/* Platforms Hub */}
-        <section className="mb-32">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-12 py-16 border-y border-slate-100">
-             {data.social_links?.youtube ? (
-               <a href={data.social_links.youtube} target="_blank" rel="noreferrer" className="flex items-center gap-4 text-slate-400 font-bold grayscale hover:grayscale-0 transition-all cursor-pointer">
-                 <YoutubeSVG size={32} />
-                 <span className="text-xl">Youtube</span>
-               </a>
-             ) : (
-               <div className="flex items-center gap-4 text-slate-200 font-bold grayscale">
-                 <YoutubeSVG size={32} />
-                 <span className="text-xl">Youtube</span>
-               </div>
-             )}
-             
-             {data.social_links?.instagram ? (
-               <a href={data.social_links.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-4 text-slate-400 font-bold grayscale hover:grayscale-0 transition-all cursor-pointer">
-                 <InstagramSVG size={32} />
-                 <span className="text-xl">Instagram</span>
-               </a>
-             ) : (
-               <div className="flex items-center gap-4 text-slate-200 font-bold grayscale">
-                 <InstagramSVG size={32} />
-                 <span className="text-xl">Instagram</span>
-               </div>
-             )}
-
-             {data.social_links?.twitter ? (
-               <a href={data.social_links.twitter} target="_blank" rel="noreferrer" className="flex items-center gap-4 text-slate-400 font-bold grayscale hover:grayscale-0 transition-all cursor-pointer">
-                 <TwitterSVG size={32} />
-                 <span className="text-xl">Twitter</span>
-               </a>
-             ) : (
-               <div className="flex items-center gap-4 text-slate-200 font-bold grayscale">
-                 <TwitterSVG size={32} />
-                 <span className="text-xl">Twitter</span>
-               </div>
-             )}
+        {/* BENTO 5: Image Showcase strip */}
+        <div className="col-span-2 md:col-span-12 bg-white border border-slate-200/60 p-6 rounded-[2.5rem] shadow-sm">
+          <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 px-2">Visual Feed</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1611606063065-ee7946f0787a?q=80&w=1974&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=2070&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2070&auto=format&fit=crop'
+            ].map((url, i) => (
+              <div key={i} className="aspect-square bg-slate-100 rounded-2xl overflow-hidden hover:scale-[1.03] transition-all cursor-pointer relative group border border-slate-200/30">
+                <img src={url} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-rose-500/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Heart className="text-white fill-white" size={24} />
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
 
-        {/* Content Preview Grid */}
-        <section className="mb-40">
-          <h3 className="text-xs font-black uppercase tracking-[0.4em] text-slate-300 text-center mb-16">Latest_Creations</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-             {[
-               'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop',
-               'https://images.unsplash.com/photo-1611606063065-ee7946f0787a?q=80&w=1974&auto=format&fit=crop',
-               'https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=2070&auto=format&fit=crop',
-               'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2070&auto=format&fit=crop'
-             ].map((url, i) => (
-               <div key={i} className="aspect-square bg-slate-100 rounded-3xl overflow-hidden hover:scale-105 transition-all cursor-pointer relative group">
-                 <img src={url} className="w-full h-full object-cover" />
-                 <div className="absolute inset-0 bg-rose-500/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <Heart className="text-white" size={32} fill="white" />
-                 </div>
-               </div>
-             ))}
+        {/* BENTO 6: Booking CTA & Footer */}
+        <div className="col-span-2 md:col-span-12 bg-white border border-slate-200/60 p-8 rounded-[3rem] shadow-sm text-center space-y-6">
+          <h2 className="text-2xl md:text-3xl font-black uppercase text-slate-900">Initiate Collaboration</h2>
+          
+          <div className="flex flex-wrap justify-center gap-4">
+            {data.social_links?.email && (
+              <a href={`mailto:${data.social_links.email}`} className="px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white font-bold uppercase tracking-widest text-xs rounded-xl transition-all shadow-md">
+                Send Collab Request
+              </a>
+            )}
+            {data.social_links?.custom_url && (
+              <a href={data.social_links.custom_url} target="_blank" rel="noreferrer" className="px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold uppercase tracking-widest text-xs rounded-xl transition-all shadow-md">
+                {data.social_links.custom_label || "Creator Portfolio"}
+              </a>
+            )}
           </div>
-        </section>
 
-        {/* Footer / Contact Hub */}
-        <footer id="contact" className="text-center py-24 border-t border-slate-100">
-           <h2 className="text-4xl md:text-6xl font-black mb-12 tracking-tighter uppercase">Let's <span className="text-rose-500">Connect.</span></h2>
-           
-           <div className="flex flex-wrap justify-center gap-6 mb-16">
-              {data.social_links?.email && (
-                <a href={`mailto:${data.social_links.email}`} className="px-10 py-5 bg-rose-500 hover:bg-rose-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl transition-all shadow-xl shadow-rose-500/20">
-                  Send Collaboration Invite
-                </a>
-              )}
-              {data.social_links?.linkedin && (
-                <a href={data.social_links.linkedin} target="_blank" rel="noreferrer" className="px-10 py-5 bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest text-xs rounded-2xl transition-all shadow-xl shadow-slate-900/20">
-                  Business LinkedIn
-                </a>
-              )}
-              {data.social_links?.custom_url && (
-                <a href={data.social_links.custom_url} target="_blank" rel="noreferrer" className="px-10 py-5 bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl transition-all shadow-xl shadow-orange-500/20">
-                  {data.social_links.custom_label || "Business Site"}
-                </a>
-              )}
-           </div>
+          <div className="h-px bg-slate-100 w-full pt-4"></div>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            © {new Date().getFullYear()} Creator Vibe • Built with Portfolio Builder
+          </div>
+        </div>
 
-           <div className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">Official Portfolio of {data.full_name} // © {new Date().getFullYear()}</div>
-        </footer>
-      </main>
+      </div>
     </div>
   );
 }

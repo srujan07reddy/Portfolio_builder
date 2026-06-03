@@ -18,8 +18,37 @@ import {
   Layers
 } from "lucide-react";
 
-export default function StandardTemplate({ siteData, activeTheme }: any) {
-  const rolesArray = siteData.hero.roles ? siteData.hero.roles.split(',').flatMap((r: string) => [r.trim(), 2000]) : [];
+export default function StandardTemplate({ siteData: initialSiteData, activeTheme: initialActiveTheme, data }: any) {
+  const resolvedTheme = initialActiveTheme || {
+    name: data?.theme_color || "Cyan",
+    accent: `bg-${(data?.theme_color || "Cyan").toLowerCase()}-500`,
+    text: `text-${(data?.theme_color || "Cyan").toLowerCase()}-500`,
+    border: `border-${(data?.theme_color || "Cyan").toLowerCase()}-500/50`
+  };
+
+  const resolvedData = initialSiteData || (data ? {
+    hero: {
+      name: data.full_name || "Your Name",
+      roles: data.professions?.join(", ") || data.profession || "Strategic Consultant",
+      avatar: data.avatar_url || "/images/avatar-placeholder.png",
+    },
+    bio: data.bio || "Professional bio here...",
+    links: {
+      email: data.social_links?.email || "",
+      github: data.social_links?.github || "",
+      linkedin: data.social_links?.linkedin || ""
+    },
+    projects: data.projects?.map((p: any) => ({
+      name: p.title,
+      description: p.description,
+      tools: p.tech_stack?.join(", ") || ""
+    })) || []
+  } : null);
+
+  const siteData = resolvedData;
+  const activeTheme = resolvedTheme;
+
+  const rolesArray = resolvedData?.hero?.roles ? resolvedData.hero.roles.split(',').flatMap((r: string) => [r.trim(), 2000]) : [];
   
   const accentGradient: Record<string, string> = {
     Cyan: "from-cyan-400 to-blue-600",
@@ -28,7 +57,7 @@ export default function StandardTemplate({ siteData, activeTheme }: any) {
     Ruby: "from-rose-400 to-red-600"
   };
 
-  const activeGradient = accentGradient[activeTheme.name] || "from-cyan-400 to-blue-600";
+  const activeGradient = accentGradient[resolvedTheme.name] || "from-cyan-400 to-blue-600";
 
   return (
     <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-blue-500 selection:text-white">
@@ -189,7 +218,7 @@ export default function StandardTemplate({ siteData, activeTheme }: any) {
                 </div>
               </div>
               <div className="bg-black/20 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-10 space-y-8">
-                <h4 className="text-xl font-bold">Let's discuss your next breakthrough.</h4>
+                <h4 className="text-xl font-bold">Let&apos;s discuss your next breakthrough.</h4>
                 <div className="space-y-4">
                   <input type="text" placeholder="Your Email" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-white/20 transition-all" />
                   <button className="w-full py-4 bg-white text-blue-900 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-white/90 transition-all">
@@ -207,10 +236,10 @@ export default function StandardTemplate({ siteData, activeTheme }: any) {
             <div className="space-y-12">
               <div className="space-y-4">
                 <h2 className="text-sm font-black text-blue-500 uppercase tracking-[0.4em]">Get_In_Touch</h2>
-                <h3 className="text-6xl font-black leading-none tracking-tighter uppercase">Let's build <br /> something <br /> legendary.</h3>
+                <h3 className="text-6xl font-black leading-none tracking-tighter uppercase">Let&apos;s build <br /> something <br /> legendary.</h3>
               </div>
               <p className="text-white/40 text-lg leading-relaxed max-w-md">
-                I'm currently available for new projects, full-time roles, or consulting. Drop me a line and let's discuss how we can work together.
+                I&apos;m currently available for new projects, full-time roles, or consulting. Drop me a line and let&apos;s discuss how we can work together.
               </p>
               <div className="space-y-6">
                 <a href={`mailto:${siteData.links.email}`} className="flex items-center gap-6 group">

@@ -12,8 +12,12 @@ import EditorialRichTemplate from "@/templates/specialized/EditorialRichTemplate
 import DataForwardTemplate from "@/templates/specialized/DataForwardTemplate";
 import ModularJourneyTemplate from "@/templates/specialized/ModularJourneyTemplate";
 import ExpertTrustTemplate from "@/templates/specialized/ExpertTrustTemplate";
+import CorporateGlacierTemplate from "@/templates/CorporateGlacier";
+import CorporateTemplate from "@/templates/CorporateTemplate";
+import MinimalistTemplate from "@/templates/MinimalistTemplate";
 import { sanitizeInput } from "@/lib/validation";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function PublicPortfolio() {
   const params = useParams();
@@ -23,9 +27,11 @@ export default function PublicPortfolio() {
   const username = sanitizeInput(rawUsername).toLowerCase().trim();
 
   const [profile, setProfile] = useState<any>(null);
+  const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
     async function fetchPortfolio() {
@@ -63,6 +69,14 @@ export default function PublicPortfolio() {
         
         const data = portfolioData;
 
+        if (data) {
+          const { data: projData } = await supabase
+            .from("projects")
+            .select("*")
+            .eq("portfolio_id", data.id);
+          setProjects(projData || []);
+        }
+
         if (error) {
           // Don't leak information about whether user exists
           setError(true);
@@ -77,8 +91,15 @@ export default function PublicPortfolio() {
             full_name: sanitizeInput(data.full_name || ""),
             bio: sanitizeInput(data.bio || ""),
             username: sanitizeInput(data.username || ""),
+            profession: data.professions?.[0] || data.profession || "general",
           };
           setProfile(sanitizedData);
+
+          // Check if current user is owner to show back to dashboard button
+          const { data: sessionData } = await supabase.auth.getSession();
+          if (sessionData?.session?.user?.id === data.owner_id) {
+            setIsOwner(true);
+          }
         }
       } catch (err: any) {
         setError(true);
@@ -118,24 +139,109 @@ export default function PublicPortfolio() {
   // If found, render the actual template based on profession
   if (!profile) return null;
 
-  switch (profile.profession) {
-    case 'engineer':
-      return <DevPreciseTemplate data={profile} />;
-    case 'teacher':
-      return <AcademicCleanTemplate data={profile} />;
-    case 'actor':
-      return <CinemaDramaticTemplate data={profile} />;
-    case 'influencer':
-      return <VibrantSocialTemplate data={profile} />;
-    case 'editor':
-      return <EditorialRichTemplate data={profile} />;
-    case 'manager':
-      return <DataForwardTemplate data={profile} />;
-    case 'student':
-      return <ModularJourneyTemplate data={profile} />;
-    case 'doctor':
-      return <ExpertTrustTemplate data={profile} />;
-    default:
-      return <StandardTemplate data={profile} />;
-  }
+  const themeColor = profile.theme_color || "Cyan";
+  const siteData = {
+    hero: {
+      name: profile.full_name || "Your Name",
+      roles: profile.professions?.join(", ") || profile.profession || "Strategic Consultant",
+      avatar: profile.avatar_url || "/images/avatar-placeholder.png",
+    },
+    bio: profile.bio || "Professional bio here...",
+    links: {
+      email: profile.social_links?.email || "",
+      github: profile.social_links?.github || "",
+      linkedin: profile.social_links?.linkedin || ""
+    },
+    domains: {
+      list: profile.specialized_data?.expertise_areas?.map((name: string) => ({ name, description: "Expertise in this area." })) || []
+    },
+    projects: projects.map(p => ({
+      name: p.title,
+      description: p.description,
+      tools: p.tech_stack?.join(", ") || ""
+    })),
+    consulting: {
+      headline: profile.specialized_data?.tagline || "Strategic Alignment",
+      body: profile.bio || "Professional consulting services."
+    }
+  };
+
+  const activeTheme = {
+    name: themeColor,
+    accent: `bg-${themeColor.toLowerCase()}-500`,
+    text: `text-${themeColor.toLowerCase()}-500`,
+    border: `border-${themeColor.toLowerCase()}-500/50`
+  };
+
+  const renderTemplate = () => {
+    // If they explicitly selected a standard layout, render it regardless of profession
+    const isStandardLayoutChoice = [
+      'Standard', 'Corporate_Glacier', 'Corporate', 'Minimalist', 'standard_classic'
+    ].includes(profile.template_choice);
+
+    if (isStandardLayoutChoice) {
+      switch (profile.template_choice) {
+        case 'Corporate_Glacier':
+          return <CorporateGlacierTemplate siteData={siteData} activeTheme={activeTheme} />;
+        case 'Corporate':
+          return <CorporateTemplate siteData={siteData} activeTheme={activeTheme} />;
+        case 'Minimalist':
+          return <MinimalistTemplate siteData={siteData} activeTheme={activeTheme} />;
+        case 'Standard':
+        case 'standard_classic':
+        default:
+          return <StandardTemplate siteData={siteData} activeTheme={activeTheme} />;
+      }
+    }
+
+    // Otherwise, render the specialized layout based on their profession (default for specialized_v1)
+    switch (profile.profession) {
+      case 'engineer':
+      case 'architect':
+      case 'data_scientist':
+        return <DevPreciseTemplate data={profile} />;
+      case 'teacher':
+      case 'scholar':
+        return <AcademicCleanTemplate data={profile} />;
+      case 'actor':
+        return <CinemaDramaticTemplate data={profile} />;
+      case 'influencer':
+      case 'player':
+      case 'coach':
+      case 'scout':
+        return <VibrantSocialTemplate data={profile} />;
+      case 'editor':
+      case 'artist':
+        return <EditorialRichTemplate data={profile} />;
+      case 'manager':
+      case 'executive':
+      case 'coordinator':
+        return <DataForwardTemplate data={profile} />;
+      case 'student':
+        return <ModularJourneyTemplate data={profile} />;
+      case 'doctor':
+      case 'lawyer':
+      case 'consultant':
+        return <ExpertTrustTemplate data={profile} />;
+      default:
+        return <StandardTemplate siteData={siteData} activeTheme={activeTheme} />;
+    }
+  };
+
+  return (
+    <>
+      {renderTemplate()}
+      {isOwner && (
+        <div className="fixed bottom-6 left-6 z-[999]">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-[0_10px_25px_rgba(59,130,246,0.3)] transition-all border border-blue-500 hover:scale-105"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Link>
+        </div>
+      )}
+    </>
+  );
 }
